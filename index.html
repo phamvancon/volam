@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tân Võ Lâm Gigantic V3 - Phân Tích Phối Đồ & Soi Đồ AI</title>
+    <title>Tân Võ Lâm Gigantic V3.5 - Cloud Save & AI Advisor</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -14,6 +14,40 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'volam-13002';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyDGWhgQoMa9z-Eqox3YWQq3aKvalP2JWsE",
+            authDomain: "volam-13002.firebaseapp.com",
+            projectId: "volam-13002",
+            storageBucket: "volam-13002.firebasestorage.app",
+            messagingSenderId: "767616702591",
+            appId: "1:767616702591:web:ec20d7053ed745c292874a",
+            measurementId: "G-K8R2MF60VW"
+        };
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+
+            window.FirebaseDB = db;
+            window.FirebaseAuth = auth;
+            window.FirebaseAppId = appId;
+            window.FirebaseSDK = {
+                doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs,
+                signInAnonymously, signInWithCustomToken, onAuthStateChanged
+            };
+            window.dispatchEvent(new Event('firebase-ready'));
+        } catch (e) {
+            console.warn("Firebase Init Fallback Mode:", e);
+        }
+    </script>
 
     <script>
         tailwind.config = {
@@ -68,7 +102,6 @@
         .glow-hoa { box-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
         .glow-tho { box-shadow: 0 0 16px rgba(217, 119, 6, 0.4); }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #06080d; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -81,7 +114,6 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo, useRef } = React;
 
-        // Dữ liệu Ngũ Hành Tương Sinh
         const ELEMENTS = {
             kim: { id: 'kim', name: 'Kim', color: '#f59e0b', icon: 'fa-coins', generates: 'thuy', generatedBy: 'tho', class: 'element-kim', bg: 'bg-element-kim', glow: 'glow-kim' },
             moc: { id: 'moc', name: 'Mộc', color: '#10b981', icon: 'fa-tree', generates: 'hoa', generatedBy: 'thuy', class: 'element-moc', bg: 'bg-element-moc', glow: 'glow-moc' },
@@ -90,21 +122,19 @@
             tho: { id: 'tho', name: 'Thổ', color: '#d97706', icon: 'fa-mountain', generates: 'kim', generatedBy: 'hoa', class: 'element-tho', bg: 'bg-element-tho', glow: 'glow-tho' }
         };
 
-        // Danh sách Môn Phái Chuẩn Tân Võ Lâm
         const FACTIONS = [
-            { id: 'tl', name: 'Thiếu Lâm', element: 'kim', type: 'Ngoại Công', icon: 'fa-hands-praying', desc: 'Đao/Bổng/Quyền - Trâu bò, Phản Sát Thương', prio: 'Tốc đánh, Sinh lực, Kháng tất cả, Phản sát thương' },
-            { id: 'tv', name: 'Thiên Vương', element: 'kim', type: 'Ngoại Công', icon: 'fa-shield-halved', desc: 'Thương/Chùy/Đao - Dồn ST Mạnh, Giảm choáng', prio: 'Sát thương VL, Tốc đánh, Tỷ lệ chí mạng, Hút sinh lực' },
-            { id: 'dm', name: 'Đường Môn', element: 'moc', type: 'Ngoại Công', icon: 'fa-crosshairs', desc: 'Nỏ/Bẫy/Bão Vũ - Cơ Động, Chí Mạng Cao', prio: 'Bạo kích, Tốc độ di chuyển, Thân pháp, Độc sát' },
-            { id: '5d', name: 'Ngũ Độc', element: 'moc', type: 'Nội/Ngoại', icon: 'fa-skull-crossbones', desc: 'Đao/Chưởng - Rút Máu Độc Tố Sâu', prio: 'Sát thương Độc tố, Giảm thời gian độc, Né tránh' },
-            { id: 'nm', name: 'Nga My', element: 'thuy', type: 'Nội Công', icon: 'fa-wand-magic-sparkles', desc: 'Kiếm/Chưởng - Buff Hỗ Trợ, Làm Chậm', prio: 'Băng sát, Hồi phục HP/MP, Tốc độ di chuyển, Kháng tất cả' },
-            { id: 'ty', name: 'Thúy Yên', element: 'thuy', type: 'Nội/Ngoại', icon: 'fa-fan', desc: 'Đao/Đơn Kiếm - Băng Tốc, Khống Chế', prio: 'Băng sát, Tốc độ đánh, Tỷ lệ làm chậm, Né tránh' },
-            { id: 'cb', name: 'Cái Bang', element: 'hoa', type: 'Ngoại/Nội', icon: 'fa-wine-bottle', desc: 'Bổng/Chưởng - Né Tránh & Sát Thương Rộng', prio: 'Hỏa sát, Né tránh, Tốc độ đánh, Chí mạng' },
-            { id: 'tn', name: 'Thiên Nhẫn', element: 'hoa', type: 'Nội/Ngoại', icon: 'fa-khanda', desc: 'Đao/Kích - Bùa Chú, Hút Sinh Lực', prio: 'Hỏa sát, Hút HP/MP, Tốc độ đánh, Giảm choáng' },
-            { id: 'vd', name: 'Võ Đang', element: 'tho', type: 'Nội Công', icon: 'fa-yin-yang', desc: 'Quyền/Kiếm - Tụ Khí Thành Khiên, Choáng', prio: 'Lôi sát, Tụ khí MP, Tỷ lệ choáng, Nội lực tối đa' },
-            { id: 'cl', name: 'Côn Lôn', element: 'tho', type: 'Nội/Ngoại', icon: 'fa-bolt', desc: 'Đao/Kiếm - Lôi Sát Thương, Buff Tốc Độ', prio: 'Lôi sát, Tốc độ di chuyển, Chí mạng, Kháng tất cả' }
+            { id: 'tl', name: 'Thiếu Lâm', element: 'kim', type: 'Ngoại Công', icon: 'fa-hands-praying', desc: 'Đao/Bổng/Quyền - Trâu bò, Phản Sát Thương', statPrio: 'SM: 60% | SK: 40%', prio: 'Tốc đánh, Sinh lực, Kháng tất cả, Phản sát thương' },
+            { id: 'tv', name: 'Thiên Vương', element: 'kim', type: 'Ngoại Công', icon: 'fa-shield-halved', desc: 'Thương/Chùy/Đao - Dồn ST Mạnh, Giảm choáng', statPrio: 'SM: 70% | TP: 20% | SK: 10%', prio: 'Sát thương VL, Tốc đánh, Tỷ lệ chí mạng, Hút sinh lực' },
+            { id: 'dm', name: 'Đường Môn', element: 'moc', type: 'Ngoại Công', icon: 'fa-crosshairs', desc: 'Nỏ/Bẫy/Bão Vũ - Cơ Động, Chí Mạng Cao', statPrio: 'TP: 60% | SM: 30% | SK: 10%', prio: 'Bạo kích, Tốc độ di chuyển, Thân pháp, Độc sát' },
+            { id: '5d', name: 'Ngũ Độc', element: 'moc', type: 'Nội/Ngoại', icon: 'fa-skull-crossbones', desc: 'Đao/Chưởng - Rút Máu Độc Tố Sâu', statPrio: 'NL: 50% | SK: 30% | TP: 20%', prio: 'Sát thương Độc tố, Giảm thời gian độc, Né tránh' },
+            { id: 'nm', name: 'Nga My', element: 'thuy', type: 'Nội Công', icon: 'fa-wand-magic-sparkles', desc: 'Kiếm/Chưởng - Buff Hỗ Trợ, Làm Chậm', statPrio: 'NL: 60% | SK: 40%', prio: 'Băng sát, Hồi phục HP/MP, Tốc độ di chuyển, Kháng tất cả' },
+            { id: 'ty', name: 'Thúy Yên', element: 'thuy', type: 'Nội/Ngoại', icon: 'fa-fan', desc: 'Đao/Đơn Kiếm - Băng Tốc, Khống Chế', statPrio: 'TP: 50% | NL: 30% | SK: 20%', prio: 'Băng sát, Tốc độ đánh, Tỷ lệ làm chậm, Né tránh' },
+            { id: 'cb', name: 'Cái Bang', element: 'hoa', type: 'Ngoại/Nội', icon: 'fa-wine-bottle', desc: 'Bổng/Chưởng - Né Tránh & Sát Thương Rộng', statPrio: 'SM: 50% | TP: 30% | SK: 20%', prio: 'Hỏa sát, Né tránh, Tốc độ đánh, Chí mạng' },
+            { id: 'tn', name: 'Thiên Nhẫn', element: 'hoa', type: 'Nội/Ngoại', icon: 'fa-khanda', desc: 'Đao/Kích - Bùa Chú, Hút Sinh Lực', statPrio: 'SM: 50% | NL: 30% | SK: 20%', prio: 'Hỏa sát, Hút HP/MP, Tốc độ đánh, Giảm choáng' },
+            { id: 'vd', name: 'Võ Đang', element: 'tho', type: 'Nội Công', icon: 'fa-yin-yang', desc: 'Quyền/Kiếm - Tụ Khí Thành Khiên, Choáng', statPrio: 'NL: 70% | SK: 30%', prio: 'Lôi sát, Tụ khí MP, Tỷ lệ choáng, Nội lực tối đa' },
+            { id: 'cl', name: 'Côn Lôn', element: 'tho', type: 'Nội/Ngoại', icon: 'fa-bolt', desc: 'Đao/Kiếm - Lôi Sát Thương, Buff Tốc Độ', statPrio: 'NL: 50% | TP: 30% | SK: 20%', prio: 'Lôi sát, Tốc độ di chuyển, Chí mạng, Kháng tất cả' }
         ];
 
-        // Chuỗi Vòng Tròn 10 Món Kích Ẩn Chuẩn JX1
         const SLOT_CHAIN = [
             { id: 'weapon', name: 'Vũ Khí', icon: 'fa-sword', activatesSlot: 'armor' },
             { id: 'armor', name: 'Áo Giáp', icon: 'fa-user-shield', activatesSlot: 'head' },
@@ -118,41 +148,175 @@
             { id: 'boots', name: 'Giày', icon: 'fa-shoe-prints', activatesSlot: 'weapon' }
         ];
 
-        // Trang bị mặc định
-        const DEFAULT_ITEMS = {
-            weapon: { name: 'Thái Hư Kiếm Hoàng Kim', element: 'kim', baseStats: [{ stat: 'Sát thương Vật Lý', val: 145, unit: '%' }], line1: { stat: 'Sát thương Ngũ Hành', val: 98, unit: 'đ' }, line2: { stat: 'Tốc độ đánh', val: 30, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 6, unit: '%' } },
-            armor: { name: 'Áo Lam Ngữ Hoàng Kim', element: 'thuy', baseStats: [{ stat: 'Sinh khí', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Giảm thời gian choáng', val: 40, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 20, unit: 'đ' } },
-            head: { name: 'Mão Tử Mãng Hoàng Kim', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 35, unit: '%' }, line2: { stat: 'Giảm độc tố', val: 40, unit: 'đ' }, line3: { stat: 'Né tránh', val: 120, unit: 'đ' } },
-            necklace: { name: 'Dây Chuyền An Bang', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 20, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 25, unit: '%' }, line2: { stat: 'Tỷ lệ chí mạng', val: 12, unit: '%' }, line3: { stat: 'Sinh lực tối đa', val: 250, unit: 'đ' } },
-            ring1: { name: 'Nhẫn An Bang Trên', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 30, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 15, unit: '%' }, line3: { stat: 'Sức mạnh', val: 30, unit: 'đ' } },
-            ring2: { name: 'Nhẫn An Bang Dưới', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 30, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 40, unit: 'đ' }, line3: { stat: 'Thân pháp', val: 30, unit: 'đ' } },
-            pendant: { name: 'Ngọc Bội Định Quốc', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 20, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 20, unit: '%' }, line2: { stat: 'Thời gian trúng độc', val: -35, unit: '%' }, line3: { stat: 'Phục hồi MP', val: 25, unit: 'đ' } },
-            gloves: { name: 'Bao Tay Định Quốc', element: 'moc', baseStats: [{ stat: 'Phòng thủ vật lý', val: 100, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 15, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 30, unit: '%' }, line3: { stat: 'Né tránh', val: 200, unit: 'đ' } },
-            belt: { name: 'Đai Lưng An Bang', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 120, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 30, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 35, unit: 'đ' }, line3: { stat: 'Thể lực', val: 60, unit: 'đ' } },
-            boots: { name: 'Giày Định Quốc', element: 'tho', baseStats: [{ stat: 'Tốc độ di chuyển', val: 40, unit: '%' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 30, unit: '%' }, line2: { stat: 'Sinh lực tối đa', val: 220, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 35, unit: 'đ' } }
+        // Mẫu Trang Bị Theo Set
+        const GEAR_SETS = {
+            anbang_dinhquoc: {
+                id: 'anbang_dinhquoc',
+                name: 'Set An Bang + Định Quốc (Hoàng Kim Standard)',
+                desc: 'Set kích chuẩn Kháng Tất Cả, Máu, Tốc đánh và Né tránh cho đa số môn phái.',
+                items: {
+                    weapon: { name: 'Thái Hư Kiếm Hoàng Kim', element: 'kim', baseStats: [{ stat: 'Sát thương Vật Lý', val: 145, unit: '%' }], line1: { stat: 'Sát thương Ngũ Hành', val: 98, unit: 'đ' }, line2: { stat: 'Tốc độ đánh', val: 30, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 6, unit: '%' } },
+                    armor: { name: 'Áo Lam Ngữ Hoàng Kim', element: 'thuy', baseStats: [{ stat: 'Sinh khí', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Giảm thời gian choáng', val: 40, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 20, unit: 'đ' } },
+                    head: { name: 'Mão Tử Mãng Hoàng Kim', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 35, unit: '%' }, line2: { stat: 'Giảm độc tố', val: 40, unit: 'đ' }, line3: { stat: 'Né tránh', val: 120, unit: 'đ' } },
+                    necklace: { name: 'Dây Chuyền An Bang', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 20, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 25, unit: '%' }, line2: { stat: 'Tỷ lệ chí mạng', val: 12, unit: '%' }, line3: { stat: 'Sinh lực tối đa', val: 250, unit: 'đ' } },
+                    ring1: { name: 'Nhẫn An Bang Trên', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 30, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 15, unit: '%' }, line3: { stat: 'Sức mạnh', val: 30, unit: 'đ' } },
+                    ring2: { name: 'Nhẫn An Bang Dưới', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 30, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 40, unit: 'đ' }, line3: { stat: 'Thân pháp', val: 30, unit: 'đ' } },
+                    pendant: { name: 'Ngọc Bội Định Quốc', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 20, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 20, unit: '%' }, line2: { stat: 'Thời gian trúng độc', val: -35, unit: '%' }, line3: { stat: 'Phục hồi MP', val: 25, unit: 'đ' } },
+                    gloves: { name: 'Bao Tay Định Quốc', element: 'moc', baseStats: [{ stat: 'Phòng thủ vật lý', val: 100, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 15, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 30, unit: '%' }, line3: { stat: 'Né tránh', val: 200, unit: 'đ' } },
+                    belt: { name: 'Đai Lưng An Bang', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 120, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 30, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 35, unit: 'đ' }, line3: { stat: 'Thể lực', val: 60, unit: 'đ' } },
+                    boots: { name: 'Giày Định Quốc', element: 'tho', baseStats: [{ stat: 'Tốc độ di chuyển', val: 40, unit: '%' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 30, unit: '%' }, line2: { stat: 'Sinh lực tối đa', val: 220, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 35, unit: 'đ' } }
+                }
+            },
+            nhutinh_hiepcot: {
+                id: 'nhutinh_hiepcot',
+                name: 'Set Nhu Tình + Hiệp Cốt (Bản Tốc Đánh Bạo Kích)',
+                desc: 'Thiên về ép Tốc độ đánh, Sát thương Ngũ Hành và Tỷ lệ Bạo kích cực lớn.',
+                items: {
+                    weapon: { name: 'Bát Sát Kiếm Hoàng Kim', element: 'kim', baseStats: [{ stat: 'Sát thương Vật Lý', val: 160, unit: '%' }], line1: { stat: 'Sát thương Ngũ Hành', val: 120, unit: 'đ' }, line2: { stat: 'Tốc độ đánh', val: 40, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 8, unit: '%' } },
+                    armor: { name: 'Áo Nhu Tình Hoàng Kim', element: 'thuy', baseStats: [{ stat: 'Sinh lực', val: 220, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 30, unit: '%' }, line2: { stat: 'Giảm choáng', val: 50, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 30, unit: 'đ' } },
+                    head: { name: 'Nón Hiệp Cốt Hoàng Kim', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 40, unit: '%' }, line2: { stat: 'Giảm độc', val: 50, unit: 'đ' }, line3: { stat: 'Chí mạng', val: 15, unit: '%' } },
+                    necklace: { name: 'Dây Chuyền Nhu Tình', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 25, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 20, unit: '%' }, line3: { stat: 'Bạo kích', val: 18, unit: '%' } },
+                    ring1: { name: 'Nhẫn Hiệp Cốt Trên', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 35, unit: '%' }, line2: { stat: 'Sát thương Ngũ Hành', val: 80, unit: 'đ' }, line3: { stat: 'Sức mạnh', val: 40, unit: 'đ' } },
+                    ring2: { name: 'Nhẫn Nhu Tình Dưới', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 35, unit: '%' }, line2: { stat: 'Tốc độ đánh', val: 15, unit: '%' }, line3: { stat: 'Thân pháp', val: 40, unit: 'đ' } },
+                    pendant: { name: 'Ngọc Bội Hiệp Cốt', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 25, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 22, unit: '%' }, line2: { stat: 'Trúng độc', val: -40, unit: '%' }, line3: { stat: 'Hồi MP', val: 30, unit: 'đ' } },
+                    gloves: { name: 'Bao Tay Nhu Tình', element: 'moc', baseStats: [{ stat: 'Phòng thủ', val: 120, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 20, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 35, unit: '%' }, line3: { stat: 'Né tránh', val: 250, unit: 'đ' } },
+                    belt: { name: 'Đai Lưng Hiệp Cốt', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Băng', val: 35, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 45, unit: 'đ' }, line3: { stat: 'Thể lực', val: 80, unit: 'đ' } },
+                    boots: { name: 'Giày Nhu Tình', element: 'tho', baseStats: [{ stat: 'Tốc di chuyển', val: 45, unit: '%' }], line1: { stat: 'Kháng Lôi', val: 35, unit: '%' }, line2: { stat: 'Sinh lực', val: 280, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 45, unit: 'đ' } }
+                }
+            }
         };
 
         function App() {
             const [selectedFaction, setSelectedFaction] = useState(FACTIONS[8]); // Võ Đang
-            const [items, setItems] = useState(DEFAULT_ITEMS);
-            const [activeTab, setActiveTab] = useState('sim'); // sim, ai_scan, forge, factions
+            const [userLevel, setUserLevel] = useState(90);
+            const [items, setItems] = useState(GEAR_SETS.anbang_dinhquoc.items);
+            const [activeTab, setActiveTab] = useState('sim'); // sim, level_guide, ai_scan, cloud_saves, forge, factions
             const [editingSlot, setEditingSlot] = useState(null);
             const [shareCode, setShareCode] = useState('');
             const [showShareModal, setShowShareModal] = useState(false);
             const [toastMessage, setToastMessage] = useState('');
 
-            // AI Scan states
+            // Cloud Save States
+            const [currentUser, setCurrentUser] = useState(null);
+            const [cloudBuilds, setCloudBuilds] = useState([]);
+            const [publicCloudBuilds, setPublicCloudBuilds] = useState([]);
+            const [isCloudLoading, setIsCloudLoading] = useState(false);
+            const [buildTitle, setBuildTitle] = useState('');
+
+            // AI Scanner States
             const [uploadedImage, setUploadedImage] = useState(null);
             const [aiAnalysisResult, setAiAnalysisResult] = useState('');
             const [isAnalyzing, setIsAnalyzing] = useState(false);
             const fileInputRef = useRef(null);
 
+            // Toast Notifier
             const showToast = (msg) => {
                 setToastMessage(msg);
                 setTimeout(() => setToastMessage(''), 3000);
             };
 
-            // Tính toán trạng thái Kích Ẩn
+            useEffect(() => {
+                const initFirebase = async () => {
+                    if (!window.FirebaseSDK || !window.FirebaseAuth) return;
+                    const { signInWithCustomToken, signInAnonymously, onAuthStateChanged } = window.FirebaseSDK;
+                    const auth = window.FirebaseAuth;
+
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (err) {
+                        console.warn("Auth token failed, fallback to anonymous:", err);
+                        await signInAnonymously(auth);
+                    }
+
+                    onAuthStateChanged(auth, (usr) => {
+                        setCurrentUser(usr);
+                        if (usr) {
+                            fetchUserCloudBuilds(usr.uid);
+                            fetchPublicCloudBuilds();
+                        }
+                    });
+                };
+
+                initFirebase();
+                window.addEventListener('firebase-ready', initFirebase);
+                return () => window.removeEventListener('firebase-ready', initFirebase);
+            }, []);
+
+            // Lấy danh sách Build Cloud của User
+            const fetchUserCloudBuilds = (uid) => {
+                if (!window.FirebaseDB || !window.FirebaseSDK || !uid) return;
+                const { collection, onSnapshot } = window.FirebaseSDK;
+                const db = window.FirebaseDB;
+                const appId = window.FirebaseAppId;
+
+                const userColRef = collection(db, 'artifacts', appId, 'users', uid, 'builds');
+                onSnapshot(userColRef, (snapshot) => {
+                    const list = [];
+                    snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+                    setCloudBuilds(list);
+                }, (err) => console.error("Cloud fetch user build error:", err));
+            };
+
+            // Lấy danh sách Build Public từ Cộng Đồng
+            const fetchPublicCloudBuilds = () => {
+                if (!window.FirebaseDB || !window.FirebaseSDK) return;
+                const { collection, onSnapshot } = window.FirebaseSDK;
+                const db = window.FirebaseDB;
+                const appId = window.FirebaseAppId;
+
+                const pubColRef = collection(db, 'artifacts', appId, 'public', 'data', 'community_builds');
+                onSnapshot(pubColRef, (snapshot) => {
+                    const list = [];
+                    snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+                    setPublicCloudBuilds(list);
+                }, (err) => console.error("Cloud fetch public error:", err));
+            };
+
+            // Lưu Build Hiện Tại Lên Cloud
+            const handleSaveBuildToCloud = async (isPublic = false) => {
+                if (!currentUser || !window.FirebaseDB || !window.FirebaseSDK) {
+                    showToast("Đang kết nối dịch vụ Cloud...");
+                    return;
+                }
+                setIsCloudLoading(true);
+                const { collection, addDoc } = window.FirebaseSDK;
+                const db = window.FirebaseDB;
+                const appId = window.FirebaseAppId;
+
+                const buildPayload = {
+                    title: buildTitle || `Build ${selectedFaction.name} - Lv.${userLevel}`,
+                    factionId: selectedFaction.id,
+                    factionName: selectedFaction.name,
+                    level: userLevel,
+                    items: items,
+                    updatedAt: new Date().toISOString(),
+                    userId: currentUser.uid
+                };
+
+                try {
+                    // Save Private
+                    const userColRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'builds');
+                    await addDoc(userColRef, buildPayload);
+
+                    if (isPublic) {
+                        const pubColRef = collection(db, 'artifacts', appId, 'public', 'data', 'community_builds');
+                        await addDoc(pubColRef, buildPayload);
+                    }
+
+                    setBuildTitle('');
+                    showToast("Đã lưu Build thành công lên Cloud Online!");
+                } catch (err) {
+                    console.error("Save Cloud Error:", err);
+                    showToast("Lỗi khi lưu lên Cloud!");
+                } finally {
+                    setIsCloudLoading(false);
+                }
+            };
+
             const activationStatus = useMemo(() => {
                 const status = {};
                 SLOT_CHAIN.forEach(slot => {
@@ -177,7 +341,7 @@
             const activatedCount = Object.values(activationStatus).filter(s => s.isActivated).length;
             const activationPercentage = Math.round((activatedCount / 10) * 100);
 
-            // Tổng hợp Thuộc Tính
+            // Tổng Thuộc Tính Chi Tiết
             const totalStats = useMemo(() => {
                 const totals = {
                     khangTatCa: 0, khangKim: 0, khangMoc: 0, khangThuy: 0, khangHoa: 0, khangTho: 0,
@@ -219,22 +383,23 @@
                 return totals;
             }, [items, activationStatus]);
 
-            // Điểm Đánh Giá Sức Mạnh & EHP
+            // Điểm Đánh Giá EHP & Chiến Lực
             const evaluation = useMemo(() => {
                 const avgKhang = totalStats.khangTatCa + Math.round((totalStats.khangKim + totalStats.khangMoc + totalStats.khangThuy + totalStats.khangHoa + totalStats.khangTho) / 5);
-                const ehp = Math.round(totalStats.hp * (1 + (avgKhang / 100)));
+                const ehp = Math.round((totalStats.hp + (userLevel * 25)) * (1 + (avgKhang / 100)));
                 const score = Math.round(
                     (totalStats.hp * 1.5) + 
                     (avgKhang * 120) + 
                     (totalStats.tocDoDanh * 80) + 
                     (totalStats.tocDoDiChuyen * 50) + 
                     (totalStats.stNgudHanh * 60) + 
-                    (activatedCount * 500)
+                    (activatedCount * 500) + 
+                    (userLevel * 30)
                 );
                 return { ehp, score };
-            }, [totalStats, activatedCount]);
+            }, [totalStats, activatedCount, userLevel]);
 
-            // Tự Động Kích Full 100% Kích Ẩn
+            // Tự Động Fix Kích Full
             const handleAutoFixCircle = () => {
                 let currentElem = selectedFaction.element;
                 const newItems = { ...items };
@@ -251,25 +416,15 @@
                 showToast(`Đã tối ưu Vòng Tròn Kích Ẩn 100% cho ${selectedFaction.name}!`);
             };
 
-            // Nạp Preset Hệ
-            const handleLoadPresetElement = (elemKey) => {
-                let currentElem = elemKey;
-                const newItems = { ...items };
-
-                SLOT_CHAIN.forEach(slot => {
-                    newItems[slot.id] = {
-                        ...newItems[slot.id],
-                        name: `${SLOT_CHAIN.find(s => s.id === slot.id).name} Hoàng Kim (${ELEMENTS[currentElem].name})`,
-                        element: currentElem
-                    };
-                    currentElem = ELEMENTS[currentElem].generates;
-                });
-
-                setItems(newItems);
-                showToast(`Đã nạp Preset Ngũ Hành ${ELEMENTS[elemKey].name}!`);
+            // Nạp Set Đồ Mới & Đưa Ra Gợi Ý
+            const handleApplyGearSet = (setKey) => {
+                if (GEAR_SETS[setKey]) {
+                    setItems(GEAR_SETS[setKey].items);
+                    showToast(`Đã khoác Set Đồ Mới: ${GEAR_SETS[setKey].name}!`);
+                }
             };
 
-            // Xử lý Upload Ảnh & Gọi Gemini 3 Flash API
+            // Upload Ảnh & Gọi AI Gemini 3 Flash
             const handleImageUpload = (e) => {
                 const file = e.target.files[0];
                 if (file) {
@@ -282,27 +437,22 @@
                 }
             };
 
-            // Gọi API Soi Đồ AI Gemini 3 Flash
             const analyzeImageWithGemini = async (imageDataUrl) => {
                 setIsAnalyzing(true);
                 setAiAnalysisResult('');
 
                 try {
-                    const apiKey = ""; // Canvas runtime dynamic injection
+                    const apiKey = "";
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
                     
                     const base64Data = imageDataUrl.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
 
-                    const systemPrompt = `Bạn là một Chuyên Gia Game Thủ Võ Lâm Truyền Kỳ / Tân Võ Lâm Gigantic am hiểu sâu sắc về hệ thống trang bị, kích ẩn Ngũ Hành, tẩy dòng và cường hóa. 
+                    const systemPrompt = `Bạn là một Chuyên Gia Game Thủ Võ Lâm Truyền Kỳ am hiểu sâu sắc về hệ thống trang bị, kích ẩn Ngũ Hành, tẩy dòng và cường hóa. 
 Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phân tích chi tiết bằng Tiếng Việt với cấu trúc chuẩn:
 1. 🛡️ **Thông Tin Cơ Bản**: Tên trang bị, Hệ Ngũ Hành (Kim/Mộc/Thủy/Hỏa/Thổ), Phẩm cấp.
-2. ⚡ **Đánh Giá Dòng Thuộc Tính**:
-   - Dòng Trắng (Cơ bản): [Nhận xét ngon hay cùi]
-   - 3 Dòng Ẩn: [Phân tích từng dòng, dòng nào VIP, dòng nào là Dòng Rác cần tẩy]
-3. 🔨 **Hướng Dẫn Cường Hóa & Nâng Cấp**:
-   - Thứ tự ưu tiên lên các mốc (+8, +12, +16).
-   - Loại đá / thuộc tính nên khảm hoặc tẩy lại.
-4. 🐉 **Môn Phái Phù Hợp Nhất**: Đề xuất môn phái tận dụng 100% sức mạnh của món đồ này (Thiếu Lâm, Võ Đang, Ngũ Độc...).
+2. ⚡ **Đánh Giá Dòng Thuộc Tính**: Dòng Trắng ngon/cùi, Dòng Ẩn VIP / Dòng Rác cần tẩy.
+3. 🔨 **Hướng Dẫn Cường Hóa & Khảm Đá**: Thứ tự ưu tiên lên mốc (+8, +12, +16) & đá khảm phù hợp.
+4. 🐉 **Môn Phái Phù Hợp Nhất**: Đề xuất môn phái tận dụng 100% sức mạnh món đồ này.
 5. 🏆 **Điểm Số Trang Bị**: Đánh giá trên thang điểm 100.`;
 
                     const payload = {
@@ -310,13 +460,8 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                             {
                                 role: "user",
                                 parts: [
-                                    { text: `Hãy soi và phân tích món trang bị này cho môn phái ${selectedFaction.name} (${selectedFaction.element.toUpperCase()}).` },
-                                    {
-                                        inlineData: {
-                                            mimeType: "image/png",
-                                            data: base64Data
-                                        }
-                                    }
+                                    { text: `Hãy soi và phân tích trang bị này cho môn phái ${selectedFaction.name} (Lv.${userLevel}).` },
+                                    { inlineData: { mimeType: "image/png", data: base64Data } }
                                 ]
                             }
                         ],
@@ -334,21 +479,21 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
 
                     if (text) {
                         setAiAnalysisResult(text);
-                        showToast("Đã phân tích trang bị thành công!");
+                        showToast("AI đã soi đồ xong!");
                     } else {
-                        throw new Error("Không nhận được phản hồi từ AI");
+                        throw new Error("Lỗi API response");
                     }
                 } catch (err) {
                     console.error(err);
-                    setAiAnalysisResult(`### ⚠️ Phân Tích Demo Mẫu Trang Bị (Offline Mode)
-**1. Thông Tin**: Đao Hoàng Kim Sát Thương - Hệ Kim
+                    setAiAnalysisResult(`### ⚠️ Kết Quả Phân Tích Mẫu Trang Bị (Demo Offline Mode)
+**1. Thông Tin**: Đao Hoàng Kim Kích Ẩn - Hệ Kim
 **2. Đánh Giá Dòng**:
-- *Dòng 1*: +85 Sát thương Ngũ Hành (Rất VIP)
-- *Dòng 2*: +30% Tốc độ đánh (Tối quan trọng cho Thiên Vương / Thiếu Lâm)
-- *Dòng 3*: +5% Hút Sinh Lực (Dòng Phụ Trợ Tốt)
-**3. Cường Hóa**: Ưu tiên lên +12 để kích mốc Tốc Đánh.
-**4. Môn Phái**: Thiếu Lâm, Thiên Vương.
-**5. Điểm Số**: 92 / 100.`);
+- Dòng 1: +98 Sát thương Ngũ Hành (Rất VIP)
+- Dòng 2: +30% Tốc độ đánh (Tối quan trọng cho Thiếu Lâm / Thiên Vương)
+- Dòng 3: +6% Hút Sinh Lực (Dòng Phụ Trợ Chuẩn)
+**3. Cường Hóa**: Ưu tiên đập +12 để kích mốc Tốc Đánh.
+**4. Phù Hợp**: Thiếu Lâm, Thiên Vương, Côn Lôn.
+**5. Điểm Số**: 95 / 100.`);
                     showToast("Đã xuất bản phân tích mẫu!");
                 } finally {
                     setIsAnalyzing(false);
@@ -374,15 +519,15 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                             <div>
                                 <div className="flex items-center gap-2.5 mb-1.5">
                                     <span className="bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-950 text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider shadow">
-                                        V3.0 Ultimate Pro
+                                        V3.5 Cloud & AI Pro
                                     </span>
-                                    <span className="text-xs text-slate-400 font-medium">Tích Hợp AI Soi Đồ & Full Ngũ Hành JX1</span>
+                                    <span className="text-xs text-slate-400 font-medium">Lưu Cloud Online & Gợi Ý Lên Cấp / Fit Set</span>
                                 </div>
                                 <h1 className="text-2xl md:text-3xl font-black text-amber-400 tracking-tight flex items-center gap-3">
-                                    <span>CÔNG CỤ PHÂN TÍCH PHỐI ĐỒ & SOI ĐỒ AI</span>
+                                    <span>TÂN VÕ LÂM GIGANTIC AI ADVISOR</span>
                                 </h1>
                                 <p className="text-slate-400 text-xs md:text-sm mt-1">
-                                    Tính toán Kích Ẩn 10 món trang bị, mô phỏng EHP & Tải ảnh soi đồ với Gemini 3 Flash.
+                                    Lưu trữ build online, gợi ý tăng điểm khi lên cấp & soi dòng trang bị thông minh.
                                 </p>
                             </div>
 
@@ -394,79 +539,121 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                     <span>Tự Động Kích Full 10 Món</span>
                                 </button>
                                 <button 
-                                    onClick={() => {
-                                        const code = btoa(JSON.stringify({ faction: selectedFaction.id, items }));
-                                        setShareCode(code);
-                                        setShowShareModal(true);
-                                    }}
-                                    className="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center gap-2 text-xs">
-                                    <i className="fa-solid fa-share-nodes"></i>
-                                    <span>Chia Sẻ Build</span>
+                                    onClick={() => handleSaveBuildToCloud(false)}
+                                    className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 text-xs border border-cyan-400/30">
+                                    <i className="fa-solid fa-cloud-arrow-up"></i>
+                                    <span>Lưu Cloud Online</span>
                                 </button>
                             </div>
                         </div>
 
-                        {/* Navigation Tabs */}
+                        {/* Navigation Bar */}
                         <div className="mt-6 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-2">
                                 <button 
                                     onClick={() => setActiveTab('sim')}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
                                         activeTab === 'sim' ? 'bg-amber-500 text-slate-950 border-yellow-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
                                     }`}>
                                     <i className="fa-solid fa-shield"></i>
-                                    <span>Phân Tích 10 Món Đồ</span>
+                                    <span>10 Món Kích Ẩn</span>
+                                </button>
+
+                                <button 
+                                    onClick={() => setActiveTab('level_guide')}
+                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                        activeTab === 'level_guide' ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-purple-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                                    }`}>
+                                    <i className="fa-solid fa-arrow-trend-up"></i>
+                                    <span>Gợi Ý Khi Lên Cấp</span>
                                 </button>
 
                                 <button 
                                     onClick={() => setActiveTab('ai_scan')}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
                                         activeTab === 'ai_scan' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-cyan-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
                                     }`}>
                                     <i className="fa-solid fa-robot"></i>
-                                    <span>Soi Đồ AI (Upload Ảnh)</span>
+                                    <span>Soi Đồ AI (Upload)</span>
+                                </button>
+
+                                <button 
+                                    onClick={() => setActiveTab('cloud_saves')}
+                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                        activeTab === 'cloud_saves' ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-emerald-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                                    }`}>
+                                    <i className="fa-solid fa-cloud"></i>
+                                    <span>Kho Build Cloud ({cloudBuilds.length})</span>
                                 </button>
 
                                 <button 
                                     onClick={() => setActiveTab('forge')}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
                                         activeTab === 'forge' ? 'bg-amber-500 text-slate-950 border-yellow-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
                                     }`}>
                                     <i className="fa-solid fa-hammer"></i>
-                                    <span>Chi Phí Cường Hóa (+16)</span>
-                                </button>
-
-                                <button 
-                                    onClick={() => setActiveTab('factions')}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
-                                        activeTab === 'factions' ? 'bg-amber-500 text-slate-950 border-yellow-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
-                                    }`}>
-                                    <i className="fa-solid fa-scroll"></i>
-                                    <span>Bí Kíp 10 Môn Phái</span>
+                                    <span>Cường Hóa (+16)</span>
                                 </button>
                             </div>
 
-                            {/* Môn Phái Selection */}
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-slate-400">Hệ Phái:</span>
-                                <select 
-                                    value={selectedFaction.id}
-                                    onChange={(e) => setSelectedFaction(FACTIONS.find(f => f.id === e.target.value))}
-                                    className="bg-slate-950 text-amber-400 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-amber-500">
-                                    {FACTIONS.map(f => (
-                                        <option key={f.id} value={f.id}>{f.name} ({ELEMENTS[f.element].name})</option>
-                                    ))}
-                                </select>
+                            {/* Controls Bar: Môn Phái & Level */}
+                            <div className="flex items-center gap-3 flex-wrap">
+                                <div className="flex items-center gap-1.5">
+                                    <span className="text-xs font-bold text-slate-400">Level:</span>
+                                    <input 
+                                        type="number" 
+                                        min="10" 
+                                        max="160" 
+                                        value={userLevel}
+                                        onChange={(e) => setUserLevel(Number(e.target.value))}
+                                        className="w-16 bg-slate-950 text-amber-400 border border-slate-800 rounded-lg px-2 py-1 text-xs font-bold text-center focus:outline-none focus:border-amber-500"
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-1.5">
+                                    <span className="text-xs font-bold text-slate-400">Môn Phái:</span>
+                                    <select 
+                                        value={selectedFaction.id}
+                                        onChange={(e) => setSelectedFaction(FACTIONS.find(f => f.id === e.target.value))}
+                                        className="bg-slate-950 text-amber-400 border border-slate-800 rounded-lg px-3 py-1 text-xs font-bold focus:outline-none focus:border-amber-500">
+                                        {FACTIONS.map(f => (
+                                            <option key={f.id} value={f.id}>{f.name} ({ELEMENTS[f.element].name})</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </header>
 
+                    {/* BANNER GỢI Ý KHI MẶC SET ĐỒ MỚI */}
+                    <div className="bg-panelbg border border-amber-500/30 rounded-2xl p-4 mb-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-black border border-amber-500/40">
+                                <i className="fa-solid fa-shirt"></i>
+                            </div>
+                            <div>
+                                <div className="text-xs text-amber-400 font-bold uppercase tracking-wider">Đổi Nhanh Set Trang Bị Chuẩn Võ Lâm:</div>
+                                <div className="text-xs text-slate-300 mt-0.5">Khoác các bộ đồ đã tối ưu sẵn để xem ngay chỉ số kích hoạt.</div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-wrap">
+                            {Object.keys(GEAR_SETS).map(sKey => (
+                                <button 
+                                    key={sKey}
+                                    onClick={() => handleApplyGearSet(sKey)}
+                                    className="bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700 hover:border-amber-500 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                                    <i className="fa-solid fa-gem text-amber-400"></i>
+                                    <span>{GEAR_SETS[sKey].name}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
                     {/* TAB 1: PHÂN TÍCH 10 MÓN ĐỒ */}
                     {activeTab === 'sim' && (
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                            {/* Cột Trái & Giữa: Danh Sách Trang Bị (8 Cols) */}
                             <div className="lg:col-span-8 space-y-6">
-                                {/* Status Summary Card */}
                                 <div className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black border ${
@@ -479,24 +666,23 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                         <div>
                                             <div className="text-[11px] text-slate-400 font-bold uppercase">Tỷ Lệ Kích Ẩn</div>
                                             <div className="text-base font-black text-white">{activatedCount} / 10 Món Đồ</div>
-                                            <div className="text-[11px] text-emerald-400">{activationPercentage === 100 ? 'Full 30 Dòng Ẩn Active' : 'Chưa kích trọn vẹn'}</div>
+                                            <div className="text-[11px] text-emerald-400">{activationPercentage === 100 ? 'Full 30 Dòng Ẩn Active' : 'Chưa kích hết'}</div>
                                         </div>
                                     </div>
 
                                     <div className="border-t md:border-t-0 md:border-l border-slate-800 pt-3 md:pt-0 md:pl-4">
                                         <div className="text-[11px] text-slate-400 font-bold uppercase">Sinh Thái Thực (EHP)</div>
                                         <div className="text-lg font-black text-amber-400">{evaluation.ehp.toLocaleString()} BP</div>
-                                        <div className="text-[11px] text-slate-400">Độ trâu mô phỏng chiến đấu</div>
+                                        <div className="text-[11px] text-slate-400">Độ trâu Lv.{userLevel} thực chiến</div>
                                     </div>
 
                                     <div className="border-t md:border-t-0 md:border-l border-slate-800 pt-3 md:pt-0 md:pl-4">
-                                        <div className="text-[11px] text-slate-400 font-bold uppercase">Điểm Chiến Lực (Power)</div>
+                                        <div className="text-[11px] text-slate-400 font-bold uppercase">Điểm Chiến Lực</div>
                                         <div className="text-lg font-black text-cyan-400">{evaluation.score.toLocaleString()} ĐS</div>
                                         <div className="text-[11px] text-slate-400">Đánh giá tổng quan build</div>
                                     </div>
                                 </div>
 
-                                {/* 10 Trang Bị Grid */}
                                 <div className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl">
                                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
                                         <h2 className="text-xs font-bold text-amber-400 flex items-center gap-2 uppercase tracking-wider">
@@ -596,9 +782,7 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                 </div>
                             </div>
 
-                            {/* Cột Phải: Bảng Thống Kê Tổng Thuộc Tính (4 Cols) */}
                             <div className="lg:col-span-4 space-y-6">
-                                {/* Kháng Ngũ Hành */}
                                 <div className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl">
                                     <h2 className="text-xs font-bold text-amber-400 flex items-center gap-2 mb-4 pb-2 border-b border-slate-800 uppercase tracking-wider">
                                         <i className="fa-solid fa-shield-halved"></i>
@@ -650,48 +834,66 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    )}
 
-                                {/* Sinh Tồn & Tốc Độ */}
-                                <div className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-                                    <h2 className="text-xs font-bold text-amber-400 flex items-center gap-2 pb-2 border-b border-slate-800 uppercase tracking-wider">
-                                        <i className="fa-solid fa-heart-pulse"></i>
-                                        <span>CHỈ SỐ CHIẾN ĐẤU</span>
-                                    </h2>
+                    {/* TAB 2: GỢI Ý KHI LÊN CẤP */}
+                    {activeTab === 'level_guide' && (
+                        <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-4xl mx-auto space-y-6">
+                            <div className="text-center max-w-xl mx-auto">
+                                <h2 className="text-xl font-black text-purple-400 uppercase tracking-tight flex items-center justify-center gap-2">
+                                    <i className="fa-solid fa-arrow-trend-up text-purple-400"></i>
+                                    <span>GỢI Ý ĐIỂM TIỀM NĂNG & TRANG BỊ THEO CẤP (LV.{userLevel})</span>
+                                </h2>
+                                <p className="text-xs text-slate-400 mt-1">
+                                    Mô phỏng phân bổ điểm tiềm năng và trang bị mục tiêu tối ưu nhất cho {selectedFaction.name}.
+                                </p>
+                            </div>
 
-                                    <div className="grid grid-cols-2 gap-2.5 text-xs">
-                                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                                            <div className="text-slate-400 text-[10px]">Sinh Khí (HP)</div>
-                                            <div className="text-sm font-extrabold text-red-400">+{totalStats.hp}</div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                                    <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                                        <i className="fa-solid fa-chart-pie"></i>
+                                        <span>Phân Bổ Điểm Tiềm Năng Recommended</span>
+                                    </h3>
+                                    <div className="text-xs text-slate-300 font-semibold bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                                        Tỷ lệ chuẩn môn phái: <span className="text-emerald-400">{selectedFaction.statPrio}</span>
+                                    </div>
+                                    <div className="space-y-2 text-xs">
+                                        <div className="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                                            <span className="text-slate-400">Sức Mạnh (SM):</span>
+                                            <span className="font-bold text-white">{Math.round(userLevel * 3.5)} Điểm</span>
                                         </div>
-
-                                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                                            <div className="text-slate-400 text-[10px]">Nội Lực (MP)</div>
-                                            <div className="text-sm font-extrabold text-cyan-400">+{totalStats.mp}</div>
+                                        <div className="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                                            <span className="text-slate-400">Thân Pháp (TP):</span>
+                                            <span className="font-bold text-white">{Math.round(userLevel * 2.0)} Điểm</span>
                                         </div>
-
-                                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                                            <div className="text-slate-400 text-[10px]">Tốc Độ Đánh</div>
-                                            <div className="text-sm font-extrabold text-amber-400">+{totalStats.tocDoDanh}%</div>
+                                        <div className="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                                            <span className="text-slate-400">Sinh Khí (SK):</span>
+                                            <span className="font-bold text-white">{Math.round(userLevel * 2.5)} Điểm</span>
                                         </div>
-
-                                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                                            <div className="text-slate-400 text-[10px]">Tốc Độ Di Chuyển</div>
-                                            <div className="text-sm font-extrabold text-emerald-400">+{totalStats.tocDoDiChuyen}%</div>
+                                        <div className="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                                            <span className="text-slate-400">Nội Lực (NL):</span>
+                                            <span className="font-bold text-white">{Math.round(userLevel * 2.0)} Điểm</span>
                                         </div>
                                     </div>
+                                </div>
 
+                                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                                    <h3 className="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2">
+                                        <i className="fa-solid fa-trophy"></i>
+                                        <span>Mốc Cột Mốc Mục Tiêu Đồ Theo Cấp</span>
+                                    </h3>
                                     <div className="space-y-2 text-xs">
-                                        <div className="flex justify-between p-2 rounded bg-slate-900/50 border border-slate-800">
-                                            <span className="text-slate-400">Giảm choáng:</span>
-                                            <span className="font-bold text-amber-400">+{totalStats.giamChoang} đ</span>
+                                        <div className={`p-2.5 rounded-xl border ${userLevel >= 30 ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-500'}`}>
+                                            <strong>• Lv.30 - Lv.60:</strong> Đồ Xanh 3-4 Dòng + Set An Bang Sơ Cấp.
                                         </div>
-                                        <div className="flex justify-between p-2 rounded bg-slate-900/50 border border-slate-800">
-                                            <span className="text-slate-400">Giảm độc tố:</span>
-                                            <span className="font-bold text-emerald-400">+{totalStats.giamDoc} đ</span>
+                                        <div className={`p-2.5 rounded-xl border ${userLevel >= 90 ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-500'}`}>
+                                            <strong>• Lv.90 - Lv.120:</strong> Vũ Khí Hoàng Kim + Full Set An Bang / Định Quốc 100% Kích Ẩn.
                                         </div>
-                                        <div className="flex justify-between p-2 rounded bg-slate-900/50 border border-slate-800">
-                                            <span className="text-slate-400">Giảm làm chậm:</span>
-                                            <span className="font-bold text-cyan-400">+{totalStats.giamLamCham} đ</span>
+                                        <div className={`p-2.5 rounded-xl border ${userLevel >= 150 ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-500'}`}>
+                                            <strong>• Lv.150+:</strong> Đồ Xanh 6 Dòng Max Option + Set Nhu Tình / Hiệp Cốt + Đập Đá +16.
                                         </div>
                                     </div>
                                 </div>
@@ -699,7 +901,7 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                         </div>
                     )}
 
-                    {/* TAB 2: SOI ĐỒ AI (UPLOAD ÁNH) */}
+                    {/* TAB 3: SOI ĐỒ AI */}
                     {activeTab === 'ai_scan' && (
                         <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-4xl mx-auto space-y-6">
                             <div className="text-center max-w-xl mx-auto">
@@ -712,7 +914,6 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                 </p>
                             </div>
 
-                            {/* Dropzone Upload */}
                             <div 
                                 onClick={() => fileInputRef.current?.click()}
                                 className="border-2 border-dashed border-slate-700 hover:border-amber-500/80 rounded-2xl p-8 text-center cursor-pointer bg-slate-950/60 hover:bg-slate-950/90 transition group">
@@ -742,7 +943,6 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                 )}
                             </div>
 
-                            {/* State Loading */}
                             {isAnalyzing && (
                                 <div className="bg-slate-900/80 border border-cyan-500/40 p-6 rounded-2xl text-center space-y-3">
                                     <i className="fa-solid fa-spinner fa-spin text-3xl text-cyan-400"></i>
@@ -750,7 +950,6 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                 </div>
                             )}
 
-                            {/* Output Result */}
                             {aiAnalysisResult && (
                                 <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
                                     <div className="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -771,7 +970,108 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                         </div>
                     )}
 
-                    {/* TAB 3: CHI PHÍ CƯỜNG HÓA */}
+                    {/* TAB 4: KHO BUILD CLOUD ONLINE */}
+                    {activeTab === 'cloud_saves' && (
+                        <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-5xl mx-auto space-y-6">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-800">
+                                <div>
+                                    <h2 className="text-lg font-black text-emerald-400 uppercase tracking-tight flex items-center gap-2">
+                                        <i className="fa-solid fa-cloud"></i>
+                                        <span>KHO BUILD TRANG BỊ CLOUD ONLINE</span>
+                                    </h2>
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Lưu trữ lâu dài dữ liệu build trên máy chủ Firebase. Truy cập từ bất kỳ thiết bị nào.
+                                    </p>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        type="text" 
+                                        placeholder="Đặt tên cho Build..." 
+                                        value={buildTitle}
+                                        onChange={(e) => setBuildTitle(e.target.value)}
+                                        className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-amber-300 focus:outline-none focus:border-amber-500"
+                                    />
+                                    <button 
+                                        onClick={() => handleSaveBuildToCloud(true)}
+                                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5">
+                                        <i className="fa-solid fa-share"></i>
+                                        <span>Lưu & Chia Sẻ Public</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Section Cloud User */}
+                            <div className="space-y-3">
+                                <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                                    <i className="fa-solid fa-user-lock"></i>
+                                    <span>Build Cá Nhân Trên Cloud ({cloudBuilds.length})</span>
+                                </h3>
+
+                                {cloudBuilds.length === 0 ? (
+                                    <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 text-center text-xs text-slate-500">
+                                        Chưa có Build nào được lưu trên Cloud cá nhân. Hãy ấn "Lưu Cloud Online" ở góc trên!
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {cloudBuilds.map((b) => (
+                                            <div key={b.id} className="bg-slate-950 border border-slate-800 hover:border-amber-500/50 p-4 rounded-xl space-y-2 transition">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-xs font-bold text-amber-300">{b.title}</span>
+                                                    <span className="text-[10px] bg-slate-900 text-slate-400 px-2 py-0.5 rounded">{b.factionName} (Lv.{b.level})</span>
+                                                </div>
+                                                <div className="flex justify-between items-center pt-2 border-t border-slate-900">
+                                                    <span className="text-[10px] text-slate-500">{new Date(b.updatedAt).toLocaleDateString('vi-VN')}</span>
+                                                    <button 
+                                                        onClick={() => {
+                                                            setItems(b.items);
+                                                            if (b.level) setUserLevel(b.level);
+                                                            showToast(`Đã tải Build: ${b.title}!`);
+                                                        }}
+                                                        className="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-3 py-1 rounded-lg text-xs">
+                                                        Tải Build
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Section Public Builds */}
+                            <div className="space-y-3 pt-4 border-t border-slate-800">
+                                <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                                    <i className="fa-solid fa-globe"></i>
+                                    <span>Build Chia Sẻ Từ Cộng Đồng ({publicCloudBuilds.length})</span>
+                                </h3>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {publicCloudBuilds.map((b) => (
+                                        <div key={b.id} className="bg-slate-950 border border-slate-800 hover:border-cyan-500/50 p-4 rounded-xl space-y-2 transition">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-xs font-bold text-cyan-300">{b.title}</span>
+                                                <span className="text-[10px] bg-cyan-950/60 text-cyan-400 px-2 py-0.5 rounded border border-cyan-800">{b.factionName}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center pt-2 border-t border-slate-900">
+                                                <span className="text-[10px] text-slate-500">Public Cloud Share</span>
+                                                <button 
+                                                    onClick={() => {
+                                                        setItems(b.items);
+                                                        if (b.level) setUserLevel(b.level);
+                                                        showToast(`Đã áp dụng Build public: ${b.title}!`);
+                                                    }}
+                                                    className="bg-cyan-900/60 hover:bg-cyan-800 text-white font-bold px-3 py-1 rounded-lg text-xs border border-cyan-700">
+                                                    Áp Dụng
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 5: BẢNG CƯỜNG HÓA */}
                     {activeTab === 'forge' && (
                         <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-4xl mx-auto space-y-6">
                             <div className="text-center max-w-xl mx-auto">
@@ -817,41 +1117,7 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                         </div>
                     )}
 
-                    {/* TAB 4: BÍ KÍP 10 MÔN PHÁI */}
-                    {activeTab === 'factions' && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
-                            {FACTIONS.map(f => {
-                                const el = ELEMENTS[f.element];
-                                return (
-                                    <div key={f.id} className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                                        <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                                            <div className="flex items-center gap-2.5">
-                                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm border ${el.bg} ${el.class} ${el.glow}`}>
-                                                    <i className={`fa-solid ${f.icon}`}></i>
-                                                </div>
-                                                <div>
-                                                    <div className="text-sm font-black text-white">{f.name}</div>
-                                                    <div className="text-[10px] text-slate-400">{f.type} • Hệ {el.name}</div>
-                                                </div>
-                                            </div>
-                                            <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded border ${el.bg} ${el.class}`}>
-                                                {el.name}
-                                            </span>
-                                        </div>
-
-                                        <p className="text-xs text-slate-300">{f.desc}</p>
-
-                                        <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-xs">
-                                            <span className="text-amber-400 font-bold block mb-1">Thuộc Tính Dòng Đồ Ưu Tiên:</span>
-                                            <span className="text-slate-300">{f.prio}</span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-
-                    {/* Modal Chỉnh Sửa Trang Bị */}
+                    {/* Modal Edit Trang Bị */}
                     {editingSlot && (
                         <ModalEditItem 
                             slot={SLOT_CHAIN.find(s => s.id === editingSlot)}
@@ -863,45 +1129,6 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                 showToast("Đã lưu cập nhật món đồ!");
                             }}
                         />
-                    )}
-
-                    {/* Modal Chia Sẻ Build */}
-                    {showShareModal && (
-                        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                            <div className="bg-panelbg border border-slate-700 rounded-2xl p-6 max-w-lg w-full shadow-2xl">
-                                <h3 className="text-base font-bold text-amber-400 mb-2">Mã Cấu Hình Build (JSON Base64)</h3>
-                                <textarea 
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-amber-300 font-mono h-32 focus:outline-none focus:border-amber-500 mb-4"
-                                    value={shareCode}
-                                    onChange={(e) => setShareCode(e.target.value)}
-                                ></textarea>
-                                <div className="flex justify-between">
-                                    <button 
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(shareCode);
-                                            showToast("Đã chép mã build!");
-                                        }}
-                                        className="bg-slate-800 text-amber-400 font-bold px-4 py-2 rounded-xl text-xs">
-                                        Copy Mã
-                                    </button>
-                                    <div className="flex gap-2">
-                                        <button 
-                                            onClick={() => {
-                                                try {
-                                                    const dec = JSON.parse(atob(shareCode));
-                                                    if(dec.items) setItems(dec.items);
-                                                    setShowShareModal(false);
-                                                    showToast("Tải build thành công!");
-                                                } catch(e) { showToast("Mã không hợp lệ!"); }
-                                            }}
-                                            className="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs">
-                                            Nạp Build
-                                        </button>
-                                        <button onClick={() => setShowShareModal(false)} className="bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs">Đóng</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     )}
                 </div>
             );
