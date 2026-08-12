@@ -136,17 +136,106 @@
         ];
 
         const SLOT_CHAIN = [
-            { id: 'weapon', name: 'Vũ Khí', icon: 'fa-sword', activatesSlot: 'armor' },
-            { id: 'armor', name: 'Áo Giáp', icon: 'fa-user-shield', activatesSlot: 'head' },
-            { id: 'head', name: 'Nón / Mão', icon: 'fa-hat-wizard', activatesSlot: 'necklace' },
-            { id: 'necklace', name: 'Dây Chuyền', icon: 'fa-gem', activatesSlot: 'ring1' },
-            { id: 'ring1', name: 'Nhẫn Trên', icon: 'fa-ring', activatesSlot: 'ring2' },
-            { id: 'ring2', name: 'Nhẫn Dưới', icon: 'fa-ring', activatesSlot: 'pendant' },
-            { id: 'pendant', name: 'Ngọc Bội', icon: 'fa-bookmark', activatesSlot: 'gloves' },
-            { id: 'gloves', name: 'Bao Tay', icon: 'fa-mitten', activatesSlot: 'belt' },
-            { id: 'belt', name: 'Đai Lưng', icon: 'fa-scroll', activatesSlot: 'boots' },
-            { id: 'boots', name: 'Giày', icon: 'fa-shoe-prints', activatesSlot: 'weapon' }
+            { id: 'weapon', name: 'Vũ Khí', icon: 'fa-sword', activatesSlot: 'boots', pairId: 'pair_weapon_head' },
+            { id: 'head', name: 'Nón / Mão', icon: 'fa-hat-wizard', activatesSlot: 'ring1', pairId: 'pair_weapon_head' },
+            { id: 'boots', name: 'Giày', icon: 'fa-shoe-prints', activatesSlot: 'gloves', pairId: 'pair_boots_ring1' },
+            { id: 'ring1', name: 'Nhẫn Trên', icon: 'fa-ring', activatesSlot: 'pendant', pairId: 'pair_boots_ring1' },
+            { id: 'gloves', name: 'Bao Tay', icon: 'fa-mitten', activatesSlot: 'ring2', pairId: 'pair_gloves_pendant' },
+            { id: 'pendant', name: 'Ngọc Bội', icon: 'fa-bookmark', activatesSlot: 'belt', pairId: 'pair_gloves_pendant' },
+            { id: 'ring2', name: 'Nhẫn Dưới', icon: 'fa-ring', activatesSlot: 'armor', pairId: 'pair_ring2_belt' },
+            { id: 'belt', name: 'Đai Lưng', icon: 'fa-scroll', activatesSlot: 'necklace', pairId: 'pair_ring2_belt' },
+            { id: 'armor', name: 'Áo Giáp', icon: 'fa-user-shield', activatesSlot: 'weapon', pairId: 'pair_armor_necklace' },
+            { id: 'necklace', name: 'Dây Chuyền', icon: 'fa-gem', activatesSlot: 'head', pairId: 'pair_armor_necklace' }
         ];
+
+        // Sơ đồ cấu hình bảng Ngũ Hành theo Cặp chuẩn
+        const PAIR_CONFIGS = {
+            kim: {
+                weaponElem: 'kim',
+                title: 'Bản Vũ Khí KIM (Chuẩn Bảng Ảnh Upload)',
+                factions: ['Đường Môn', 'Thúy Yên', 'Thiếu Lâm', 'Nga Mi Kiếm'],
+                pairs: [
+                    { name: 'Vũ Khí', slotId: 'weapon', elem: 'kim' },
+                    { name: 'Nón', slotId: 'head', elem: 'kim' },
+                    { name: 'Áo', slotId: 'armor', elem: 'tho' },
+                    { name: 'Dây Chuyền', slotId: 'necklace', elem: 'tho' },
+                    { name: 'Giày', slotId: 'boots', elem: 'thuy' },
+                    { name: 'Nhẫn Trên', slotId: 'ring1', elem: 'thuy' },
+                    { name: 'Bao Tay', slotId: 'gloves', elem: 'moc' },
+                    { name: 'Ngọc Bội', slotId: 'pendant', elem: 'moc' },
+                    { name: 'Nhẫn Dưới', slotId: 'ring2', elem: 'hoa' },
+                    { name: 'Đai Lưng', slotId: 'belt', elem: 'hoa' }
+                ]
+            },
+            moc: {
+                weaponElem: 'moc',
+                title: 'Bản Vũ Khí MỘC',
+                factions: ['Võ Đang', 'Thiên Vương', 'Côn Lôn', 'Ngũ Độc'],
+                pairs: [
+                    { name: 'Vũ Khí', slotId: 'weapon', elem: 'moc' },
+                    { name: 'Nón', slotId: 'head', elem: 'moc' },
+                    { name: 'Áo', slotId: 'armor', elem: 'thuy' },
+                    { name: 'Dây Chuyền', slotId: 'necklace', elem: 'thuy' },
+                    { name: 'Giày', slotId: 'boots', elem: 'hoa' },
+                    { name: 'Nhẫn Trên', slotId: 'ring1', elem: 'hoa' },
+                    { name: 'Bao Tay', slotId: 'gloves', elem: 'tho' },
+                    { name: 'Ngọc Bội', slotId: 'pendant', elem: 'tho' },
+                    { name: 'Nhẫn Dưới', slotId: 'ring2', elem: 'kim' },
+                    { name: 'Đai Lưng', slotId: 'belt', elem: 'kim' }
+                ]
+            },
+            thuy: {
+                weaponElem: 'thuy',
+                title: 'Bản Vũ Khí THỦY',
+                factions: ['Cái Bang', 'Đường Môn', 'Nga My Chưởng', 'Thiên Nhẫn'],
+                pairs: [
+                    { name: 'Vũ Khí', slotId: 'weapon', elem: 'thuy' },
+                    { name: 'Nón', slotId: 'head', elem: 'thuy' },
+                    { name: 'Áo', slotId: 'armor', elem: 'kim' },
+                    { name: 'Dây Chuyền', slotId: 'necklace', elem: 'kim' },
+                    { name: 'Giày', slotId: 'boots', elem: 'moc' },
+                    { name: 'Nhẫn Trên', slotId: 'ring1', elem: 'moc' },
+                    { name: 'Bao Tay', slotId: 'gloves', elem: 'hoa' },
+                    { name: 'Ngọc Bội', slotId: 'pendant', elem: 'hoa' },
+                    { name: 'Nhẫn Dưới', slotId: 'ring2', elem: 'tho' },
+                    { name: 'Đai Lưng', slotId: 'belt', elem: 'tho' }
+                ]
+            },
+            hoa: {
+                weaponElem: 'hoa',
+                title: 'Bản Vũ Khí HỎA',
+                factions: ['Thiếu Lâm', 'Côn Lôn', 'Thúy Yên', 'Cái Bang'],
+                pairs: [
+                    { name: 'Vũ Khí', slotId: 'weapon', elem: 'hoa' },
+                    { name: 'Nón', slotId: 'head', elem: 'hoa' },
+                    { name: 'Áo', slotId: 'armor', elem: 'moc' },
+                    { name: 'Dây Chuyền', slotId: 'necklace', elem: 'moc' },
+                    { name: 'Giày', slotId: 'boots', elem: 'tho' },
+                    { name: 'Nhẫn Trên', slotId: 'ring1', elem: 'tho' },
+                    { name: 'Bao Tay', slotId: 'gloves', elem: 'kim' },
+                    { name: 'Ngọc Bội', slotId: 'pendant', elem: 'kim' },
+                    { name: 'Nhẫn Dưới', slotId: 'ring2', elem: 'thuy' },
+                    { name: 'Đai Lưng', slotId: 'belt', elem: 'thuy' }
+                ]
+            },
+            tho: {
+                weaponElem: 'tho',
+                title: 'Bản Vũ Khí THỔ',
+                factions: ['Ngũ Độc', 'Võ Đang', 'Thiên Vương', 'Thiên Nhẫn'],
+                pairs: [
+                    { name: 'Vũ Khí', slotId: 'weapon', elem: 'tho' },
+                    { name: 'Nón', slotId: 'head', elem: 'tho' },
+                    { name: 'Áo', slotId: 'armor', elem: 'hoa' },
+                    { name: 'Dây Chuyền', slotId: 'necklace', elem: 'hoa' },
+                    { name: 'Giày', slotId: 'boots', elem: 'kim' },
+                    { name: 'Nhẫn Trên', slotId: 'ring1', elem: 'kim' },
+                    { name: 'Bao Tay', slotId: 'gloves', elem: 'thuy' },
+                    { name: 'Ngọc Bội', slotId: 'pendant', elem: 'thuy' },
+                    { name: 'Nhẫn Dưới', slotId: 'ring2', elem: 'moc' },
+                    { name: 'Đai Lưng', slotId: 'belt', elem: 'moc' }
+                ]
+            }
+        };
 
         // Mẫu Trang Bị Theo Set
         const GEAR_SETS = {
@@ -367,9 +456,9 @@
             // Đặt mặc định Môn Phái là Đường Môn (index 2 trong FACTIONS: id 'dm')
             const [selectedFaction, setSelectedFaction] = useState(FACTIONS[2]); // Đường Môn
             const [userLevel, setUserLevel] = useState(90);
-            // Khởi tạo trang bị tối ưu sẵn 100% Kích Ẩn cho Đường Môn
             const [items, setItems] = useState(() => generateFactionGearSet(FACTIONS[2]));
-            const [activeTab, setActiveTab] = useState('sim'); // sim, level_guide, ai_scan, cloud_saves, forge, factions
+            const [activeTab, setActiveTab] = useState('sim'); // sim, chart_matrix, level_guide, ai_scan, cloud_saves, forge, factions
+            const [selectedPairWeaponElem, setSelectedPairWeaponElem] = useState('kim');
             const [editingSlot, setEditingSlot] = useState(null);
             const [shareCode, setShareCode] = useState('');
             const [showShareModal, setShowShareModal] = useState(false);
@@ -644,237 +733,37 @@
 
             const activationStatus = useMemo(() => {
                 const status = {};
+                // Tùy biến kiểm tra kích ẩn theo cặp 2 món Tương Sinh
+                const slotActivatorMap = {
+                    weapon: 'armor',
+                    head: 'necklace',
+                    boots: 'weapon',
+                    ring1: 'head',
+                    gloves: 'boots',
+                    pendant: 'ring1',
+                    ring2: 'gloves',
+                    belt: 'pendant',
+                    armor: 'ring2',
+                    necklace: 'belt'
+                };
+
                 SLOT_CHAIN.forEach(slot => {
-                    const activatorSlotConfig = SLOT_CHAIN.find(s => s.activatesSlot === slot.id);
-                    if (activatorSlotConfig) {
-                        const activatorItem = items[activatorSlotConfig.id];
-                        const currentItem = items[slot.id];
-                        if (activatorItem && currentItem) {
-                            const actElement = ELEMENTS[activatorItem.element];
-                            const isActivated = actElement.generates === currentItem.element;
-                            status[slot.id] = {
-                                isActivated,
-                                activatedBySlot: activatorSlotConfig.id,
-                                requiredElement: actElement.id
-                            };
-                        }
+                    const activatorSlotId = slotActivatorMap[slot.id];
+                    const activatorItem = items[activatorSlotId];
+                    const currentItem = items[slot.id];
+                    if (activatorItem && currentItem) {
+                        const actElement = ELEMENTS[activatorItem.element];
+                        const isActivated = actElement.generates === currentItem.element;
+                        status[slot.id] = {
+                            isActivated,
+                            activatedBySlot: activatorSlotId,
+                            requiredElement: actElement.id
+                        };
                     }
                 });
                 return status;
             }, [items]);
-
-            const activatedCount = Object.values(activationStatus).filter(s => s.isActivated).length;
-            const activationPercentage = Math.round((activatedCount / 10) * 100);
-
-            // Tổng Thuộc Tính Chi Tiết
-            const totalStats = useMemo(() => {
-                const totals = {
-                    khangTatCa: 0, khangKim: 0, khangMoc: 0, khangThuy: 0, khangHoa: 0, khangTho: 0,
-                    hp: 0, mp: 0, tocDoDanh: 0, tocDoDiChuyen: 0, giamChoang: 0, giamDoc: 0, giamLamCham: 0,
-                    chiMang: 0, stNgudHanh: 0, neTranh: 0
-                };
-
-                const parseAndAdd = (statName, val) => {
-                    const name = statName.toLowerCase();
-                    if (name.includes('kháng tất cả')) totals.khangTatCa += val;
-                    else if (name.includes('băng') || name.includes('thủy')) totals.khangThuy += val;
-                    else if (name.includes('lôi') || name.includes('thổ')) totals.khangTho += val;
-                    else if (name.includes('độc') || name.includes('mộc')) totals.khangMoc += val;
-                    else if (name.includes('hỏa')) totals.khangHoa += val;
-                    else if (name.includes('kim') || name.includes('vật lý phòng')) totals.khangKim += val;
-                    else if (name.includes('sinh khí') || name.includes('sinh lực')) totals.hp += val;
-                    else if (name.includes('nội lực')) totals.mp += val;
-                    else if (name.includes('tốc độ đánh')) totals.tocDoDanh += val;
-                    else if (name.includes('tốc độ di chuyển')) totals.tocDoDiChuyen += val;
-                    else if (name.includes('choáng')) totals.giamChoang += val;
-                    else if (name.includes('trúng độc')) totals.giamDoc += val;
-                    else if (name.includes('làm chậm')) totals.giamLamCham += val;
-                    else if (name.includes('chí mạng')) totals.chiMang += val;
-                    else if (name.includes('sát thương ngũ') || name.includes('ngũ hành')) totals.stNgudHanh += val;
-                    else if (name.includes('né tránh')) totals.neTranh += val;
-                };
-
-                Object.keys(items).forEach(slotId => {
-                    const item = items[slotId];
-                    const isAct = activationStatus[slotId]?.isActivated;
-                    item.baseStats.forEach(bs => parseAndAdd(bs.stat, Number(bs.val) || 0));
-                    if (isAct) {
-                        if (item.line1) parseAndAdd(item.line1.stat, Number(item.line1.val) || 0);
-                        if (item.line2) parseAndAdd(item.line2.stat, Number(item.line2.val) || 0);
-                        if (item.line3) parseAndAdd(item.line3.stat, Number(item.line3.val) || 0);
-                    }
-                });
-
-                return totals;
-            }, [items, activationStatus]);
-
-            // Điểm Đánh Giá EHP & Chiến Lực
-            const evaluation = useMemo(() => {
-                const avgKhang = totalStats.khangTatCa + Math.round((totalStats.khangKim + totalStats.khangMoc + totalStats.khangThuy + totalStats.khangHoa + totalStats.khangTho) / 5);
-                const ehp = Math.round((totalStats.hp + (userLevel * 25)) * (1 + (avgKhang / 100)));
-                const score = Math.round(
-                    (totalStats.hp * 1.5) + 
-                    (avgKhang * 120) + 
-                    (totalStats.tocDoDanh * 80) + 
-                    (totalStats.tocDoDiChuyen * 50) + 
-                    (totalStats.stNgudHanh * 60) + 
-                    (activatedCount * 500) + 
-                    (userLevel * 30)
-                );
-                return { ehp, score };
-            }, [totalStats, activatedCount, userLevel]);
-
-            // Tự Động Fix Kích Full
-            const handleAutoFixCircle = () => {
-                let currentElem = selectedFaction.element;
-                const newItems = { ...items };
-
-                SLOT_CHAIN.forEach(slot => {
-                    newItems[slot.id] = {
-                        ...newItems[slot.id],
-                        element: currentElem
-                    };
-                    currentElem = ELEMENTS[currentElem].generates;
-                });
-
-                setItems(newItems);
-                showToast(`Đã tối ưu Vòng Tròn Kích Ẩn 100% cho ${selectedFaction.name}!`);
-            };
-
-            // Nạp Set Đồ Mới & Đưa Ra Gợi Ý
-            const handleApplyGearSet = (setKey) => {
-                if (GEAR_SETS[setKey]) {
-                    setItems(GEAR_SETS[setKey].items);
-                    showToast(`Đã khoác Set Đồ Mới: ${GEAR_SETS[setKey].name}!`);
-                }
-            };
-
-            // Upload Ảnh & Gọi AI Gemini 3 Flash
-            const handleImageUpload = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        setUploadedImage(reader.result);
-                        analyzeImageWithGemini(reader.result);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-
-            const analyzeImageWithGemini = async (imageDataUrl) => {
-                setIsAnalyzing(true);
-                setAiAnalysisResult('');
-
-                try {
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                    
-                    const base64Data = imageDataUrl.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
-
-                    const systemPrompt = `Bạn là một Chuyên Gia Game Thủ Võ Lâm Truyền Kỳ am hiểu sâu sắc về hệ thống trang bị, kích ẩn Ngũ Hành, tẩy dòng và cường hóa. 
-Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phân tích chi tiết bằng Tiếng Việt với cấu trúc chuẩn:
-1. 🛡️ **Thông Tin Cơ Bản**: Tên trang bị, Hệ Ngũ Hành (Kim/Mộc/Thủy/Hỏa/Thổ), Phẩm cấp.
-2. ⚡ **Đánh Giá Dòng Thuộc Tính**: Dòng Trắng ngon/cùi, Dòng Ẩn VIP / Dòng Rác cần tẩy.
-3. 🔨 **Hướng Dẫn Cường Hóa & Khảm Đá**: Thứ tự ưu tiên lên mốc (+8, +12, +16) & đá khảm phù hợp.
-4. 🐉 **Môn Phái Phù Hợp Nhất**: Đề xuất môn phái tận dụng 100% sức mạnh món đồ này.
-5. 🏆 **Điểm Số Trang Bị**: Đánh giá trên thang điểm 100.`;
-
-                    const payload = {
-                        contents: [
-                            {
-                                role: "user",
-                                parts: [
-                                    { text: `Hãy soi và phân tích trang bị này cho môn phái ${selectedFaction.name} (Lv.${userLevel}).` },
-                                    { inlineData: { mimeType: "image/png", data: base64Data } }
-                                ]
-                            }
-                        ],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    const result = await response.json();
-                    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                    if (text) {
-                        setAiAnalysisResult(text);
-                        showToast("AI đã soi đồ xong!");
-                    } else {
-                        throw new Error("Lỗi API response");
-                    }
-                } catch (err) {
-                    console.error(err);
-                    setAiAnalysisResult(`### ⚠️ Kết Quả Phân Tích Mẫu Trang Bị (Demo Offline Mode)
-**1. Thông Tin**: Đao Hoàng Kim Kích Ẩn - Hệ Kim
-**2. Đánh Giá Dòng**:
-- Dòng 1: +98 Sát thương Ngũ Hành (Rất VIP)
-- Dòng 2: +30% Tốc độ đánh (Tối quan trọng cho Thiếu Lâm / Thiên Vương)
-- Dòng 3: +6% Hút Sinh Lực (Dòng Phụ Trợ Chuẩn)
-**3. Cường Hóa**: Ưu tiên đập +12 để kích mốc Tốc Đánh.
-**4. Phù Hợp**: Thiếu Lâm, Thiên Vương, Côn Lôn.
-**5. Điểm Số**: 95 / 100.`);
-                    showToast("Đã xuất bản phân tích mẫu!");
-                } finally {
-                    setIsAnalyzing(false);
-                }
-            };
-
-            return (
-                <div className="max-w-7xl mx-auto px-4 py-6">
-                    {/* Toast Notification */}
-                    {toastMessage && (
-                        <div className="fixed top-5 right-5 z-50 bg-gold text-slate-950 font-black px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-yellow-300">
-                            <i className="fa-solid fa-circle-check text-xl"></i>
-                            <span>{toastMessage}</span>
-                        </div>
-                    )}
-
-                    {/* Header Banner */}
-                    <header className="bg-panelbg border border-slate-800 rounded-3xl p-6 mb-6 shadow-2xl relative overflow-hidden">
-                        <div className="absolute -right-12 -bottom-12 opacity-10 text-9xl text-gold pointer-events-none font-title">
-                            武林
-                        </div>
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
-                            <div>
-                                <div className="flex items-center gap-2.5 mb-1.5">
-                                    <span className="bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-950 text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider shadow">
-                                        V3.5 Cloud & AI Pro
-                                    </span>
-                                    <span className="text-xs text-slate-400 font-medium">Lưu Cloud Online & Gợi Ý Lên Cấp / Fit Set</span>
-                                </div>
-                                <h1 className="text-2xl md:text-3xl font-black text-amber-400 tracking-tight flex items-center gap-3">
-                                    <span>TÂN VÕ LÂM GIGANTIC AI ADVISOR</span>
-                                </h1>
-                                <p className="text-slate-400 text-xs md:text-sm mt-1">
-                                    Lưu trữ build online, gợi ý tăng điểm khi lên cấp & soi dòng trang bị thông minh.
-                                </p>
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-3">
-                                <button 
-                                    onClick={handleAutoFixCircle}
-                                    className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 text-xs border border-emerald-400/30">
-                                    <i className="fa-solid fa-wand-magic-sparkles"></i>
-                                    <span>Tự Động Kích Full 10 Món</span>
-                                </button>
-                                <button 
-                                    onClick={() => handleSaveBuildToCloud(false)}
-                                    className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 text-xs border border-cyan-400/30">
-                                    <i className="fa-solid fa-cloud-arrow-up"></i>
-                                    <span>Lưu Cloud Online</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Navigation Bar */}
-                        <div className="mt-6 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
-                            <div className="flex flex-wrap gap-2">
+<!-- ... existing code ... bg-panelbg border border-slate-800 ... -->
                                 <button 
                                     onClick={() => setActiveTab('sim')}
                                     className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
@@ -882,6 +771,15 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                     }`}>
                                     <i className="fa-solid fa-shield"></i>
                                     <span>10 Món Kích Ẩn</span>
+                                </button>
+
+                                <button 
+                                    onClick={() => setActiveTab('chart_matrix')}
+                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                        activeTab === 'chart_matrix' ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 border-yellow-300 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                                    }`}>
+                                    <i className="fa-solid fa-table-cells"></i>
+                                    <span>Bảng Ngũ Hành Cặp (Từ Ảnh)</span>
                                 </button>
 
                                 <button 
@@ -893,184 +791,127 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                     <span>Sơ Đồ Ngũ Hành</span>
                                 </button>
 
-                                <button 
-                                    onClick={() => setActiveTab('level_guide')}
-                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
-                                        activeTab === 'level_guide' ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-purple-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
-                                    }`}>
-                                    <i className="fa-solid fa-arrow-trend-up"></i>
-                                    <span>Gợi Ý Khi Lên Cấp</span>
-                                </button>
-
-                                <button 
-                                    onClick={() => setActiveTab('ai_scan')}
-                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
-                                        activeTab === 'ai_scan' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-cyan-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
-                                    }`}>
-                                    <i className="fa-solid fa-robot"></i>
-                                    <span>Soi Đồ AI (Upload)</span>
-                                </button>
-
-                                <button 
-                                    onClick={() => setActiveTab('cloud_saves')}
-                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
-                                        activeTab === 'cloud_saves' ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-emerald-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
-                                    }`}>
-                                    <i className="fa-solid fa-cloud"></i>
-                                    <span>Kho Build Cloud ({cloudBuilds.length})</span>
-                                </button>
-
-                                <button 
-                                    onClick={() => setActiveTab('forge')}
-                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
-                                        activeTab === 'forge' ? 'bg-amber-500 text-slate-950 border-yellow-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
-                                    }`}>
-                                    <i className="fa-solid fa-hammer"></i>
-                                    <span>Cường Hóa (+16)</span>
-                                </button>
-                            </div>
-
-                            {/* Controls Bar: Môn Phái & Level */}
-                            <div className="flex items-center gap-3 flex-wrap">
-                                <div className="flex items-center gap-1.5">
-                                    <span className="text-xs font-bold text-slate-400">Level:</span>
-                                    <input 
-                                        type="number" 
-                                        min="10" 
-                                        max="160" 
-                                        value={userLevel}
-                                        onChange={(e) => setUserLevel(Number(e.target.value))}
-                                        className="w-16 bg-slate-950 text-amber-400 border border-slate-800 rounded-lg px-2 py-1 text-xs font-bold text-center focus:outline-none focus:border-amber-500"
-                                    />
-                                </div>
-
-                                <div className="flex items-center gap-1.5">
-                                    <span className="text-xs font-bold text-slate-400">Môn Phái:</span>
-                                    <select 
-                                        value={selectedFaction.id}
-                                        onChange={(e) => {
-                                            const found = FACTIONS.find(f => f.id === e.target.value);
-                                            if (found) handleFactionSelect(found);
-                                        }}
-                                        className="bg-slate-950 text-amber-400 border border-slate-800 rounded-lg px-3 py-1 text-xs font-bold focus:outline-none focus:border-amber-500">
-                                        {FACTIONS.map(f => (
-                                            <option key={f.id} value={f.id}>{f.name} ({ELEMENTS[f.element].name})</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Thanh Chọn Môn Phái Trực Quan 1-Click */}
-                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
-                            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 mr-1">
-                                <i className="fa-solid fa-users"></i>
-                                <span>Đổi Nhanh Môn Phái:</span>
-                            </span>
-                            {FACTIONS.map(f => {
-                                const el = ELEMENTS[f.element];
-                                const isSel = selectedFaction.id === f.id;
-                                return (
-                                    <button
-                                        key={f.id}
-                                        onClick={() => handleFactionSelect(f)}
-                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
-                                            isSel 
-                                                ? `${el.bg} ${el.class} border-amber-400 shadow-lg scale-105 ring-1 ring-amber-400` 
-                                                : 'bg-slate-900/90 text-slate-400 border-slate-800 hover:border-slate-600 hover:text-white'
-                                        }`}
-                                    >
-                                        <i className={`fa-solid ${f.icon}`}></i>
-                                        <span>{f.name}</span>
-                                        <span className={`text-[9px] px-1 rounded uppercase font-black ${el.bg} ${el.class}`}>
-                                            {el.name}
+                    {/* TAB BẢNG NGŨ HÀNH CẶP THEO ẢNH UPLOAD */}
+                    {activeTab === 'chart_matrix' && (
+                        <div className="space-y-6 max-w-5xl mx-auto">
+                            <div className="bg-panelbg border border-amber-500/40 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-800">
+                                    <div>
+                                        <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2.5 py-1 rounded uppercase tracking-wider">
+                                            Bản Kích Đồ Cặp Tương Sinh Chuẩn
                                         </span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </header>
-
-                    {/* BANNER GỢI Ý KHI MẶC SET ĐỒ MỚI */}
-                    <div className="bg-panelbg border border-amber-500/30 rounded-2xl p-4 mb-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-black border border-amber-500/40">
-                                <i className="fa-solid fa-shirt"></i>
-                            </div>
-                            <div>
-                                <div className="text-xs text-amber-400 font-bold uppercase tracking-wider">Đổi Nhanh Set Trang Bị Chuẩn Võ Lâm:</div>
-                                <div className="text-xs text-slate-300 mt-0.5">Khoác các bộ đồ đã tối ưu sẵn cho Đường Môn & Môn Phái để xem ngay chỉ số.</div>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 flex-wrap">
-                            {Object.keys(GEAR_SETS).map(sKey => (
-                                <button 
-                                    key={sKey}
-                                    onClick={() => handleApplyGearSet(sKey)}
-                                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
-                                        sKey.includes('_dm') 
-                                            ? 'bg-emerald-950/80 hover:bg-emerald-900 border-emerald-500/60 text-emerald-300 shadow-lg' 
-                                            : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border-slate-700 hover:border-amber-500'
-                                    }`}>
-                                    <i className={`fa-solid ${sKey.includes('_dm') ? 'fa-crosshairs text-emerald-400' : 'fa-gem text-amber-400'}`}></i>
-                                    <span>{GEAR_SETS[sKey].name}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* BẢNG BÍ KÍP PHỐI ĐỒ ĐƯỜNG MÔN */}
-                    {selectedFaction.id === 'dm' && (
-                        <div className="bg-gradient-to-r from-emerald-950/40 via-slate-900 to-teal-950/40 border border-emerald-500/40 rounded-2xl p-5 mb-6 shadow-2xl relative overflow-hidden">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                <div className="space-y-1">
-                                    <div className="flex items-center gap-2">
-                                        <span className="bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase">Bí Kíp Đường Môn</span>
-                                        <h3 className="text-sm font-black text-emerald-400 uppercase tracking-wide">
-                                            Phân Tích Chi Tiết Set An Bang vs Set Nhu Tình + Hiệp Cốt
-                                        </h3>
+                                        <h2 className="text-xl font-black text-amber-400 uppercase tracking-tight mt-1 flex items-center gap-2">
+                                            <i className="fa-solid fa-table"></i>
+                                            <span>BẢNG KÍCH NGŨ HÀNH TƯƠNG ỨNG TỪ ẢNH UPLOAD</span>
+                                        </h2>
+                                        <p className="text-xs text-slate-300 mt-1">
+                                            Sơ đồ kích ẩn theo cặp 2 món khép kín: Thổ ➔ Kim ➔ Thủy ➔ Mộc ➔ Hỏa ➔ Thổ.
+                                        </p>
                                     </div>
-                                    <p className="text-xs text-slate-300">
-                                        Tùy thuộc vào phong cách thi đấu: **Kháng Trâu Bền Bỉ (An Bang)** hay **Sát Thủ Dồn Dame Chí Mạng (Nhu Tình + Hiệp Cốt)**.
-                                    </p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button 
-                                        onClick={() => handleApplyGearSet('anbang_dm')}
-                                        className="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
-                                        <i className="fa-solid fa-shield"></i> Mặc Set An Bang ĐM
-                                    </button>
-                                    <button 
-                                        onClick={() => handleApplyGearSet('nhutinh_hiepcot_dm')}
-                                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
-                                        <i className="fa-solid fa-bolt"></i> Mặc Set Nhu Tình ĐM
-                                    </button>
-                                </div>
-                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-emerald-900/60 text-xs">
-                                <div className="bg-slate-950/80 p-3.5 rounded-xl border border-emerald-800/60 space-y-2">
-                                    <div className="font-bold text-amber-400 flex items-center gap-1.5">
-                                        <i className="fa-solid fa-shield-halved"></i> 1. Set An Bang + Định Quốc (Trận Đấu Lớn / Tống Kim)
+                                    {/* Chọn Hệ Vũ Khí */}
+                                    <div className="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
+                                        <span className="text-xs font-bold text-amber-400">Chọn Vũ Khí:</span>
+                                        {Object.keys(PAIR_CONFIGS).map(eKey => {
+                                            const el = ELEMENTS[eKey];
+                                            const isSelected = selectedPairWeaponElem === eKey;
+                                            return (
+                                                <button
+                                                    key={eKey}
+                                                    onClick={() => setSelectedPairWeaponElem(eKey)}
+                                                    className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 border ${
+                                                        isSelected ? `${el.bg} ${el.class} border-amber-400 ring-1 ring-amber-400 shadow-md` : 'bg-slate-900 text-slate-400 border-slate-800'
+                                                    }`}
+                                                >
+                                                    <i className={`fa-solid ${el.icon}`}></i>
+                                                    <span>{el.name}</span>
+                                                </button>
+                                            );
+                                        })}
                                     </div>
-                                    <ul className="text-slate-300 space-y-1 list-disc list-inside text-[11px]">
-                                        <li><strong>Ưu điểm:</strong> Ép Kháng Tất Cả tới 70-80%+, Máu cực trâu, Giảm thời gian trúng độc & làm chậm.</li>
-                                        <li><strong>Phù hợp:</strong> Đường Môn Bẫy, Đường Môn Tống Kim đánh đông người, cần trụ lâu rải bẫy.</li>
-                                        <li><strong>Điểm nhấn:</strong> Kết hợp Vũ khí Mộc + Mão/Bao tay Định Quốc Mộc để kích 100% Ẩn.</li>
-                                    </ul>
                                 </div>
 
-                                <div className="bg-slate-950/80 p-3.5 rounded-xl border border-emerald-800/60 space-y-2">
-                                    <div className="font-bold text-cyan-400 flex items-center gap-1.5">
-                                        <i className="fa-solid fa-burst"></i> 2. Set Nhu Tình + Hiệp Cốt (PK 1v1 / Săn Boss / Bão Vũ)
-                                    </div>
-                                    <ul className="text-slate-300 space-y-1 list-disc list-inside text-[11px]">
-                                        <li><strong>Ưu điểm:</strong> Tốc độ đánh max mốc (70-80%+), Tỷ lệ Bạo kích & Độc Sát vượt trội dồn gục đối thủ cực nhanh.</li>
-                                        <li><strong>Phù hợp:</strong> Đường Môn Bão Vũ Liễu Diệp, Đường Môn Nỏ Tụ Sát dồn dame sinh tồn ngắn.</li>
-                                        <li><strong>Điểm nhấn:</strong> Đẩy Thân Pháp lên mức 300+ để tận dụng tối đa điểm bạo kích của Hiệp Cốt.</li>
-                                    </ul>
-                                </div>
+                                {/* Khung Bảng Chuẩn Giống Ảnh Upload */}
+                                {(() => {
+                                    const cfg = PAIR_CONFIGS[selectedPairWeaponElem];
+                                    return (
+                                        <div className="mt-6 space-y-4">
+                                            <div className="flex justify-between items-center flex-wrap gap-2">
+                                                <div className="text-sm font-extrabold text-amber-300 uppercase flex items-center gap-2">
+                                                    <i className="fa-solid fa-shield-halved"></i>
+                                                    <span>{cfg.title}</span>
+                                                </div>
+                                                <button
+                                                    onClick={() => {
+                                                        const newItems = { ...items };
+                                                        cfg.pairs.forEach(p => {
+                                                            if (newItems[p.slotId]) {
+                                                                newItems[p.slotId] = {
+                                                                    ...newItems[p.slotId],
+                                                                    element: p.elem
+                                                                };
+                                                            }
+                                                        });
+                                                        setItems(newItems);
+                                                        showToast(`Đã áp dụng bảng Ngũ Hành Cặp cho Vũ Khí ${ELEMENTS[selectedPairWeaponElem].name}!`);
+                                                    }}
+                                                    className="bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-black px-4 py-2 rounded-xl text-xs shadow-lg transition flex items-center gap-1.5 border border-yellow-300"
+                                                >
+                                                    <i className="fa-solid fa-check-double"></i>
+                                                    <span>Áp Dụng Bản Ngũ Hành Này Cho Bộ Đồ</span>
+                                                </button>
+                                            </div>
+
+                                            <div className="overflow-x-auto rounded-xl border border-amber-500/30 bg-amber-950/20">
+                                                <table className="w-full text-left text-xs border-collapse">
+                                                    <thead>
+                                                        <tr className="bg-gradient-to-r from-amber-600 to-yellow-600 text-slate-950 font-black text-center text-sm border-b border-amber-500">
+                                                            <th className="p-3 border-r border-amber-500/40 w-1/3">TRANG BỊ</th>
+                                                            <th className="p-3 border-r border-amber-500/40 w-1/4">HỆ</th>
+                                                            <th className="p-3 w-1/2">PHÁI SỬ DỤNG</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-amber-900/40 bg-slate-950/90">
+                                                        {cfg.pairs.map((row, rIdx) => {
+                                                            const elObj = ELEMENTS[row.elem];
+                                                            return (
+                                                                <tr key={rIdx} className="hover:bg-slate-900/80 transition">
+                                                                    <td className="p-3 font-bold text-slate-100 flex items-center gap-2">
+                                                                        <i className={`fa-solid ${SLOT_CHAIN.find(s=>s.id===row.slotId)?.icon || 'fa-shield'} ${elObj.class}`}></i>
+                                                                        <span>{row.name}</span>
+                                                                    </td>
+                                                                    <td className="p-3 text-center border-x border-amber-900/30">
+                                                                        <span className={`px-3 py-1 rounded font-black uppercase text-xs inline-flex items-center gap-1.5 border ${elObj.bg} ${elObj.class}`}>
+                                                                            <i className={`fa-solid ${elObj.icon}`}></i>
+                                                                            <span>{elObj.name}</span>
+                                                                        </span>
+                                                                    </td>
+                                                                    {rIdx === 0 && (
+                                                                        <td rowSpan={10} className="p-6 text-center font-extrabold text-slate-200 align-middle bg-slate-900/50 border-l border-amber-900/40">
+                                                                            <div className="space-y-3">
+                                                                                <div className="text-amber-400 font-black text-sm uppercase tracking-wide border-b border-amber-500/30 pb-2">
+                                                                                    Các Môn Phái Khuyên Dùng:
+                                                                                </div>
+                                                                                <div className="flex flex-col gap-2">
+                                                                                    {cfg.factions.map((fName, fIdx) => (
+                                                                                        <span key={fIdx} className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs font-black text-amber-300 flex items-center justify-center gap-2 shadow-inner">
+                                                                                            <i className="fa-solid fa-dragon text-amber-500"></i>
+                                                                                            <span>{fName}</span>
+                                                                                        </span>
+                                                                                    ))}
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    )}
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         </div>
                     )}
