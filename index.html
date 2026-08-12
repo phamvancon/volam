@@ -186,10 +186,155 @@
             }
         };
 
+        // Hàm tạo trang bị kích full 100% cho môn phái
+        const generateFactionGearSet = (faction) => {
+            let currentElem = faction.element;
+            const newItems = {};
+
+            const elementStatConfigs = {
+                kim: {
+                    weaponName: `Thái Hư Đao / Thương - ${faction.name}`,
+                    dmgType: 'Sát thương Vật Lý',
+                    elemDmg: 'Vật Lý Ngũ Hành (Kim)',
+                    special: { stat: 'Phản Sát Thương', val: 12, unit: '%' }
+                },
+                moc: {
+                    weaponName: `Bão Vũ Nỏ / Đao - ${faction.name}`,
+                    dmgType: 'Sát thương Độc Tố',
+                    elemDmg: 'Độc Sát Ngũ Hành (Mộc)',
+                    special: { stat: 'Giảm thời gian trúng độc', val: 40, unit: 'đ' }
+                },
+                thuy: {
+                    weaponName: `Trầm Hương Kiếm / Đao - ${faction.name}`,
+                    dmgType: 'Băng Sát Nội Công',
+                    elemDmg: 'Băng Sát Ngũ Hành (Thủy)',
+                    special: { stat: 'Tỷ lệ làm chậm', val: 35, unit: '%' }
+                },
+                hoa: {
+                    weaponName: `Đồng Lôi Chưởng / Bổng - ${faction.name}`,
+                    dmgType: 'Hỏa Sát Ngoại Công',
+                    elemDmg: 'Hỏa Sát Ngũ Hành (Hỏa)',
+                    special: { stat: 'Né tránh', val: 220, unit: 'đ' }
+                },
+                tho: {
+                    weaponName: `Sương Phong Kiếm / Đao - ${faction.name}`,
+                    dmgType: 'Lôi Sát Nội Công',
+                    elemDmg: 'Lôi Sát Ngũ Hành (Thổ)',
+                    special: { stat: 'Tỷ lệ choáng', val: 20, unit: '%' }
+                }
+            };
+
+            SLOT_CHAIN.forEach((slot) => {
+                const config = elementStatConfigs[currentElem] || elementStatConfigs.moc;
+                const elemObj = ELEMENTS[currentElem];
+
+                if (slot.id === 'weapon') {
+                    newItems[slot.id] = {
+                        name: config.weaponName,
+                        element: currentElem,
+                        baseStats: [
+                            { stat: config.dmgType, val: 145, unit: '%' },
+                            { stat: 'Tốc độ đánh', val: 30, unit: '%' }
+                        ],
+                        line1: { stat: config.elemDmg, val: 100, unit: 'đ' },
+                        line2: { stat: 'Tỷ lệ chí mạng', val: 15, unit: '%' },
+                        line3: { stat: 'Hút Sinh Lực', val: 7, unit: '%' }
+                    };
+                } else if (slot.id === 'armor') {
+                    newItems[slot.id] = {
+                        name: `Áo Lam Ngữ Hoàng Kim (${elemObj.name})`,
+                        element: currentElem,
+                        baseStats: [{ stat: 'Sinh khí', val: 180, unit: 'đ' }],
+                        line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' },
+                        line2: { stat: 'Giảm thời gian choáng', val: 40, unit: 'đ' },
+                        line3: config.special
+                    };
+                } else if (slot.id === 'head') {
+                    newItems[slot.id] = {
+                        name: `Mão Tử Mãng (${elemObj.name})`,
+                        element: currentElem,
+                        baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }],
+                        line1: { stat: `Kháng Lôi (Thổ)`, val: 35, unit: '%' },
+                        line2: { stat: 'Né tránh', val: 180, unit: 'đ' },
+                        line3: { stat: 'Phục hồi HP', val: 20, unit: 'đ' }
+                    };
+                } else if (slot.id === 'necklace') {
+                    newItems[slot.id] = {
+                        name: `Dây Chuyền Hoàng Kim (${elemObj.name})`,
+                        element: currentElem,
+                        baseStats: [{ stat: 'Kháng Hỏa', val: 22, unit: '%' }],
+                        line1: { stat: 'Kháng Tất Cả', val: 25, unit: '%' },
+                        line2: { stat: 'Tỷ lệ chí mạng', val: 12, unit: '%' },
+                        line3: { stat: 'Sinh lực tối đa', val: 260, unit: 'đ' }
+                    };
+                } else if (slot.id === 'ring1') {
+                    newItems[slot.id] = {
+                        name: `Nhẫn Trên (${elemObj.name})`,
+                        element: currentElem,
+                        baseStats: [{ stat: 'Nội lực', val: 160, unit: 'đ' }],
+                        line1: { stat: 'Kháng Độc (Mộc)', val: 32, unit: '%' },
+                        line2: { stat: 'Tốc độ di chuyển', val: 15, unit: '%' },
+                        line3: { stat: 'Sức mạnh', val: 35, unit: 'đ' }
+                    };
+                } else if (slot.id === 'ring2') {
+                    newItems[slot.id] = {
+                        name: `Nhẫn Dưới (${elemObj.name})`,
+                        element: currentElem,
+                        baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }],
+                        line1: { stat: 'Kháng Băng (Thủy)', val: 32, unit: '%' },
+                        line2: { stat: 'Tốc độ đánh', val: 15, unit: '%' },
+                        line3: { stat: 'Thân pháp', val: 35, unit: 'đ' }
+                    };
+                } else if (slot.id === 'pendant') {
+                    newItems[slot.id] = {
+                        name: `Ngọc Bội (${elemObj.name})`,
+                        element: currentElem,
+                        baseStats: [{ stat: 'Kháng Thủy', val: 22, unit: '%' }],
+                        line1: { stat: 'Kháng Tất Cả', val: 22, unit: '%' },
+                        line2: { stat: 'Thời gian trúng độc', val: -35, unit: '%' },
+                        line3: { stat: 'Phục hồi MP', val: 25, unit: 'đ' }
+                    };
+                } else if (slot.id === 'gloves') {
+                    newItems[slot.id] = {
+                        name: `Bao Tay Hoàng Kim (${elemObj.name})`,
+                        element: currentElem,
+                        baseStats: [{ stat: 'Phòng thủ vật lý', val: 110, unit: 'đ' }],
+                        line1: { stat: 'Tốc độ đánh', val: 18, unit: '%' },
+                        line2: { stat: 'Kháng Hỏa', val: 32, unit: '%' },
+                        line3: { stat: 'Né tránh', val: 210, unit: 'đ' }
+                    };
+                } else if (slot.id === 'belt') {
+                    newItems[slot.id] = {
+                        name: `Đai Lưng Hoàng Kim (${elemObj.name})`,
+                        element: currentElem,
+                        baseStats: [{ stat: 'Sinh khí', val: 140, unit: 'đ' }],
+                        line1: { stat: 'Kháng Băng (Thủy)', val: 32, unit: '%' },
+                        line2: { stat: 'Giảm làm chậm', val: 40, unit: 'đ' },
+                        line3: { stat: 'Thể lực', val: 70, unit: 'đ' }
+                    };
+                } else {
+                    newItems[slot.id] = {
+                        name: `Giày Hoàng Kim (${elemObj.name})`,
+                        element: currentElem,
+                        baseStats: [{ stat: 'Tốc độ di chuyển', val: 42, unit: '%' }],
+                        line1: { stat: 'Kháng Lôi (Thổ)', val: 32, unit: '%' },
+                        line2: { stat: 'Sinh lực tối đa', val: 240, unit: 'đ' },
+                        line3: { stat: 'Giảm suy yếu', val: 40, unit: 'đ' }
+                    };
+                }
+
+                currentElem = elemObj.generates;
+            });
+
+            return newItems;
+        };
+
         function App() {
-            const [selectedFaction, setSelectedFaction] = useState(FACTIONS[8]); // Võ Đang
+            // Đặt mặc định Môn Phái là Đường Môn (index 2 trong FACTIONS: id 'dm')
+            const [selectedFaction, setSelectedFaction] = useState(FACTIONS[2]); // Đường Môn
             const [userLevel, setUserLevel] = useState(90);
-            const [items, setItems] = useState(GEAR_SETS.anbang_dinhquoc.items);
+            // Khởi tạo trang bị tối ưu sẵn 100% Kích Ẩn cho Đường Môn
+            const [items, setItems] = useState(() => generateFactionGearSet(FACTIONS[2]));
             const [activeTab, setActiveTab] = useState('sim'); // sim, level_guide, ai_scan, cloud_saves, forge, factions
             const [editingSlot, setEditingSlot] = useState(null);
             const [shareCode, setShareCode] = useState('');
