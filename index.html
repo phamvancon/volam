@@ -148,7 +148,6 @@
             { id: 'necklace', name: 'Dây Chuyền', icon: 'fa-gem', activatesSlot: 'head', pairId: 'pair_armor_necklace' }
         ];
 
-        // Sơ đồ cấu hình bảng Ngũ Hành theo Cặp chuẩn
         const PAIR_CONFIGS = {
             kim: {
                 weaponElem: 'kim',
@@ -237,79 +236,6 @@
             }
         };
 
-        // Mẫu Trang Bị Theo Set
-        const GEAR_SETS = {
-            anbang_dm: {
-                id: 'anbang_dm',
-                name: 'Set An Bang + Định Quốc (Đường Môn Sinh Tồn Kháng TC)',
-                desc: 'Phù hợp Đường Môn PK Tống Kim & Công Thành. Ép Kháng Tất Cả, Máu Tối Đa và Tốc Độ Di Chuyển.',
-                items: {
-                    weapon: { name: 'Bão Vũ Bát Sát Nỏ (Mộc)', element: 'moc', baseStats: [{ stat: 'Sát thương Vật Lý', val: 155, unit: '%' }, { stat: 'Tốc độ đánh', val: 35, unit: '%' }], line1: { stat: 'Độc Sát Ngũ Hành', val: 120, unit: 'đ' }, line2: { stat: 'Tỷ lệ chí mạng', val: 18, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 7, unit: '%' } },
-                    armor: { name: 'Áo Lam Ngữ Hoàng Kim (Thủy)', element: 'thuy', baseStats: [{ stat: 'Sinh khí', val: 190, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Giảm thời gian choáng', val: 45, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 25, unit: 'đ' } },
-                    head: { name: 'Mão Tử Mãng Hoàng Kim (Mộc)', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 35, unit: '%' }, line2: { stat: 'Giảm độc tố', val: 45, unit: 'đ' }, line3: { stat: 'Né tránh', val: 220, unit: 'đ' } },
-                    necklace: { name: 'Dây Chuyền An Bang (Hỏa)', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 25, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Tỷ lệ chí mạng', val: 15, unit: '%' }, line3: { stat: 'Sinh lực tối đa', val: 280, unit: 'đ' } },
-                    ring1: { name: 'Nhẫn An Bang Trên (Thổ)', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 160, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 35, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 18, unit: '%' }, line3: { stat: 'Thân pháp', val: 45, unit: 'đ' } },
-                    ring2: { name: 'Nhẫn An Bang Dưới (Kim)', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 35, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 45, unit: 'đ' }, line3: { stat: 'Sức mạnh', val: 35, unit: 'đ' } },
-                    pendant: { name: 'Ngọc Bội Định Quốc (Thủy)', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 22, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 22, unit: '%' }, line2: { stat: 'Thời gian trúng độc', val: -40, unit: '%' }, line3: { stat: 'Phục hồi MP', val: 30, unit: 'đ' } },
-                    gloves: { name: 'Bao Tay Định Quốc (Mộc)', element: 'moc', baseStats: [{ stat: 'Phòng thủ vật lý', val: 120, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 18, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 35, unit: '%' }, line3: { stat: 'Né tránh', val: 240, unit: 'đ' } },
-                    belt: { name: 'Đai Lưng An Bang (Hỏa)', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 140, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 35, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 40, unit: 'đ' }, line3: { stat: 'Thể lực', val: 80, unit: 'đ' } },
-                    boots: { name: 'Giày Định Quốc (Thổ)', element: 'tho', baseStats: [{ stat: 'Tốc độ di chuyển', val: 45, unit: '%' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 35, unit: '%' }, line2: { stat: 'Sinh lực tối đa', val: 250, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 40, unit: 'đ' } }
-                }
-            },
-            nhutinh_hiepcot_dm: {
-                id: 'nhutinh_hiepcot_dm',
-                name: 'Set Nhu Tình + Hiệp Cốt (Đường Môn Bão Vũ Tốc Đánh & Bạo Kích)',
-                desc: 'Phù hợp Đường Môn Sát Thủ dồn dame đơn mục tiêu / Boss. Max Tốc đánh 80%+, Bạo kích & Độc sát.',
-                items: {
-                    weapon: { name: 'Vương Ảo Nỏ Tụ Sát (Mộc)', element: 'moc', baseStats: [{ stat: 'Sát thương Vật Lý', val: 165, unit: '%' }, { stat: 'Tốc độ đánh', val: 40, unit: '%' }], line1: { stat: 'Độc Sát Ngũ Hành', val: 140, unit: 'đ' }, line2: { stat: 'Tỷ lệ chí mạng', val: 20, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 8, unit: '%' } },
-                    armor: { name: 'Áo Nhu Tình Hoàng Kim (Thủy)', element: 'thuy', baseStats: [{ stat: 'Sinh lực', val: 230, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 30, unit: '%' }, line2: { stat: 'Giảm choáng', val: 50, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 35, unit: 'đ' } },
-                    head: { name: 'Nón Hiệp Cốt Hoàng Kim (Mộc)', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 190, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 40, unit: '%' }, line2: { stat: 'Chí mạng', val: 18, unit: '%' }, line3: { stat: 'Thân pháp', val: 40, unit: 'đ' } },
-                    necklace: { name: 'Dây Chuyền Nhu Tình (Hỏa)', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 28, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 22, unit: '%' }, line3: { stat: 'Tỷ lệ Bạo kích', val: 20, unit: '%' } },
-                    ring1: { name: 'Nhẫn Hiệp Cốt Trên (Thổ)', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 38, unit: '%' }, line2: { stat: 'Độc Sát Ngũ Hành', val: 90, unit: 'đ' }, line3: { stat: 'Thân pháp', val: 45, unit: 'đ' } },
-                    ring2: { name: 'Nhẫn Nhu Tình Dưới (Kim)', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 38, unit: '%' }, line2: { stat: 'Tốc độ đánh', val: 20, unit: '%' }, line3: { stat: 'Sức mạnh', val: 40, unit: 'đ' } },
-                    pendant: { name: 'Ngọc Bội Hiệp Cốt (Thủy)', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 25, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 25, unit: '%' }, line2: { stat: 'Thời gian trúng độc', val: -45, unit: '%' }, line3: { stat: 'Phục hồi MP', val: 35, unit: 'đ' } },
-                    gloves: { name: 'Bao Tay Nhu Tình (Mộc)', element: 'moc', baseStats: [{ stat: 'Phòng thủ vật lý', val: 130, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 22, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 38, unit: '%' }, line3: { stat: 'Né tránh', val: 280, unit: 'đ' } },
-                    belt: { name: 'Đai Lưng Hiệp Cốt (Hỏa)', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 160, unit: 'đ' }], line1: { stat: 'Kháng Băng', val: 38, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 50, unit: 'đ' }, line3: { stat: 'Thể lực', val: 90, unit: 'đ' } },
-                    boots: { name: 'Giày Nhu Tình (Thổ)', element: 'tho', baseStats: [{ stat: 'Tốc độ di chuyển', val: 48, unit: '%' }], line1: { stat: 'Kháng Lôi', val: 38, unit: '%' }, line2: { stat: 'Sinh lực tối đa', val: 300, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 50, unit: 'đ' } }
-                }
-            },
-            anbang_dinhquoc: {
-                id: 'anbang_dinhquoc',
-                name: 'Set An Bang + Định Quốc (Hoàng Kim Standard)',
-                desc: 'Set kích chuẩn Kháng Tất Cả, Máu, Tốc đánh và Né tránh cho đa số môn phái.',
-                items: {
-                    weapon: { name: 'Thái Hư Kiếm Hoàng Kim', element: 'kim', baseStats: [{ stat: 'Sát thương Vật Lý', val: 145, unit: '%' }], line1: { stat: 'Sát thương Ngũ Hành', val: 98, unit: 'đ' }, line2: { stat: 'Tốc độ đánh', val: 30, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 6, unit: '%' } },
-                    armor: { name: 'Áo Lam Ngữ Hoàng Kim', element: 'thuy', baseStats: [{ stat: 'Sinh khí', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Giảm thời gian choáng', val: 40, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 20, unit: 'đ' } },
-                    head: { name: 'Mão Tử Mãng Hoàng Kim', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 35, unit: '%' }, line2: { stat: 'Giảm độc tố', val: 40, unit: 'đ' }, line3: { stat: 'Né tránh', val: 120, unit: 'đ' } },
-                    necklace: { name: 'Dây Chuyền An Bang', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 20, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 25, unit: '%' }, line2: { stat: 'Tỷ lệ chí mạng', val: 12, unit: '%' }, line3: { stat: 'Sinh lực tối đa', val: 250, unit: 'đ' } },
-                    ring1: { name: 'Nhẫn An Bang Trên', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 30, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 15, unit: '%' }, line3: { stat: 'Sức mạnh', val: 30, unit: 'đ' } },
-                    ring2: { name: 'Nhẫn An Bang Dưới', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 30, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 40, unit: 'đ' }, line3: { stat: 'Thân pháp', val: 30, unit: 'đ' } },
-                    pendant: { name: 'Ngọc Bội Định Quốc', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 20, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 20, unit: '%' }, line2: { stat: 'Thời gian trúng độc', val: -35, unit: '%' }, line3: { stat: 'Phục hồi MP', val: 25, unit: 'đ' } },
-                    gloves: { name: 'Bao Tay Định Quốc', element: 'moc', baseStats: [{ stat: 'Phòng thủ vật lý', val: 100, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 15, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 30, unit: '%' }, line3: { stat: 'Né tránh', val: 200, unit: 'đ' } },
-                    belt: { name: 'Đai Lưng An Bang', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 120, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 30, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 35, unit: 'đ' }, line3: { stat: 'Thể lực', val: 60, unit: 'đ' } },
-                    boots: { name: 'Giày Định Quốc', element: 'tho', baseStats: [{ stat: 'Tốc độ di chuyển', val: 40, unit: '%' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 30, unit: '%' }, line2: { stat: 'Sinh lực tối đa', val: 220, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 35, unit: 'đ' } }
-                }
-            },
-            nhutinh_hiepcot: {
-                id: 'nhutinh_hiepcot',
-                name: 'Set Nhu Tình + Hiệp Cốt (Bản Tốc Đánh Bạo Kích)',
-                desc: 'Thiên về ép Tốc độ đánh, Sát thương Ngũ Hành và Tỷ lệ Bạo kích cực lớn.',
-                items: {
-                    weapon: { name: 'Bát Sát Kiếm Hoàng Kim', element: 'kim', baseStats: [{ stat: 'Sát thương Vật Lý', val: 160, unit: '%' }], line1: { stat: 'Sát thương Ngũ Hành', val: 120, unit: 'đ' }, line2: { stat: 'Tốc độ đánh', val: 40, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 8, unit: '%' } },
-                    armor: { name: 'Áo Nhu Tình Hoàng Kim', element: 'thuy', baseStats: [{ stat: 'Sinh lực', val: 220, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 30, unit: '%' }, line2: { stat: 'Giảm choáng', val: 50, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 30, unit: 'đ' } },
-                    head: { name: 'Nón Hiệp Cốt Hoàng Kim', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 40, unit: '%' }, line2: { stat: 'Giảm độc', val: 50, unit: 'đ' }, line3: { stat: 'Chí mạng', val: 15, unit: '%' } },
-                    necklace: { name: 'Dây Chuyền Nhu Tình', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 25, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 20, unit: '%' }, line3: { stat: 'Bạo kích', val: 18, unit: '%' } },
-                    ring1: { name: 'Nhẫn Hiệp Cốt Trên', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 35, unit: '%' }, line2: { stat: 'Sát thương Ngũ Hành', val: 80, unit: 'đ' }, line3: { stat: 'Sức mạnh', val: 40, unit: 'đ' } },
-                    ring2: { name: 'Nhẫn Nhu Tình Dưới', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 35, unit: '%' }, line2: { stat: 'Tốc độ đánh', val: 15, unit: '%' }, line3: { stat: 'Thân pháp', val: 40, unit: 'đ' } },
-                    pendant: { name: 'Ngọc Bội Hiệp Cốt', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 25, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 22, unit: '%' }, line2: { stat: 'Trúng độc', val: -40, unit: '%' }, line3: { stat: 'Hồi MP', val: 30, unit: 'đ' } },
-                    gloves: { name: 'Bao Tay Nhu Tình', element: 'moc', baseStats: [{ stat: 'Phòng thủ', val: 120, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 20, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 35, unit: '%' }, line3: { stat: 'Né tránh', val: 250, unit: 'đ' } },
-                    belt: { name: 'Đai Lưng Hiệp Cốt', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Băng', val: 35, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 45, unit: 'đ' }, line3: { stat: 'Thể lực', val: 80, unit: 'đ' } },
-                    boots: { name: 'Giày Nhu Tình', element: 'tho', baseStats: [{ stat: 'Tốc di chuyển', val: 45, unit: '%' }], line1: { stat: 'Kháng Lôi', val: 35, unit: '%' }, line2: { stat: 'Sinh lực', val: 280, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 45, unit: 'đ' } }
-                }
-            }
-        };
-
-        // Hàm tạo trang bị kích full 100% cho môn phái
         const generateFactionGearSet = (faction) => {
             let currentElem = faction.element;
             const newItems = {};
@@ -453,11 +379,11 @@
         };
 
         function App() {
-            // Đặt mặc định Môn Phái là Đường Môn (index 2 trong FACTIONS: id 'dm')
-            const [selectedFaction, setSelectedFaction] = useState(FACTIONS[2]); // Đường Môn
+            // Mặc định chọn Đường Môn (FACTIONS[2])
+            const [selectedFaction, setSelectedFaction] = useState(FACTIONS[2]);
             const [userLevel, setUserLevel] = useState(90);
             const [items, setItems] = useState(() => generateFactionGearSet(FACTIONS[2]));
-            const [activeTab, setActiveTab] = useState('sim'); // sim, chart_matrix, level_guide, ai_scan, cloud_saves, forge, factions
+            const [activeTab, setActiveTab] = useState('sim'); // sim, chart_matrix, diagram, level_guide, ai_scan, cloud_saves, forge
             const [selectedPairWeaponElem, setSelectedPairWeaponElem] = useState('kim');
             const [editingSlot, setEditingSlot] = useState(null);
             const [shareCode, setShareCode] = useState('');
@@ -477,154 +403,14 @@
             const [isAnalyzing, setIsAnalyzing] = useState(false);
             const fileInputRef = useRef(null);
 
-            // Toast Notifier
             const showToast = (msg) => {
                 setToastMessage(msg);
                 setTimeout(() => setToastMessage(''), 3000);
             };
 
-            // Tự Động Cập Nhật Set Đồ, Vòng Kích Ẩn & Thuộc Tính Theo Môn Phái
             const handleFactionSelect = (faction) => {
                 setSelectedFaction(faction);
-
-                let currentElem = faction.element;
-                const newItems = {};
-
-                const elementStatConfigs = {
-                    kim: {
-                        weaponName: `Thái Hư Đao / Thương - ${faction.name}`,
-                        dmgType: 'Sát thương Vật Lý',
-                        elemDmg: 'Vật Lý Ngũ Hành (Kim)',
-                        special: { stat: 'Phản Sát Thương', val: 12, unit: '%' }
-                    },
-                    moc: {
-                        weaponName: `Bão Vũ Nỏ / Đao - ${faction.name}`,
-                        dmgType: 'Sát thương Độc Tố',
-                        elemDmg: 'Độc Sát Ngũ Hành (Mộc)',
-                        special: { stat: 'Giảm thời gian trúng độc', val: 40, unit: 'đ' }
-                    },
-                    thuy: {
-                        weaponName: `Trầm Hương Kiếm / Đao - ${faction.name}`,
-                        dmgType: 'Băng Sát Nội Công',
-                        elemDmg: 'Băng Sát Ngũ Hành (Thủy)',
-                        special: { stat: 'Tỷ lệ làm chậm', val: 35, unit: '%' }
-                    },
-                    hoa: {
-                        weaponName: `Đồng Lôi Chưởng / Bổng - ${faction.name}`,
-                        dmgType: 'Hỏa Sát Ngoại Công',
-                        elemDmg: 'Hỏa Sát Ngũ Hành (Hỏa)',
-                        special: { stat: 'Né tránh', val: 220, unit: 'đ' }
-                    },
-                    tho: {
-                        weaponName: `Sương Phong Kiếm / Đao - ${faction.name}`,
-                        dmgType: 'Lôi Sát Nội Công',
-                        elemDmg: 'Lôi Sát Ngũ Hành (Thổ)',
-                        special: { stat: 'Tỷ lệ choáng', val: 20, unit: '%' }
-                    }
-                };
-
-                SLOT_CHAIN.forEach((slot) => {
-                    const config = elementStatConfigs[currentElem] || elementStatConfigs.kim;
-                    const elemObj = ELEMENTS[currentElem];
-
-                    if (slot.id === 'weapon') {
-                        newItems[slot.id] = {
-                            name: config.weaponName,
-                            element: currentElem,
-                            baseStats: [
-                                { stat: config.dmgType, val: 145, unit: '%' },
-                                { stat: 'Tốc độ đánh', val: 30, unit: '%' }
-                            ],
-                            line1: { stat: config.elemDmg, val: 100, unit: 'đ' },
-                            line2: { stat: 'Tỷ lệ chí mạng', val: 15, unit: '%' },
-                            line3: { stat: 'Hút Sinh Lực', val: 7, unit: '%' }
-                        };
-                    } else if (slot.id === 'armor') {
-                        newItems[slot.id] = {
-                            name: `Áo Lam Ngữ Hoàng Kim (${elemObj.name})`,
-                            element: currentElem,
-                            baseStats: [{ stat: 'Sinh khí', val: 180, unit: 'đ' }],
-                            line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' },
-                            line2: { stat: 'Giảm thời gian choáng', val: 40, unit: 'đ' },
-                            line3: config.special
-                        };
-                    } else if (slot.id === 'head') {
-                        newItems[slot.id] = {
-                            name: `Mão Tử Mãng (${elemObj.name})`,
-                            element: currentElem,
-                            baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }],
-                            line1: { stat: `Kháng Lôi (Thổ)`, val: 35, unit: '%' },
-                            line2: { stat: 'Né tránh', val: 180, unit: 'đ' },
-                            line3: { stat: 'Phục hồi HP', val: 20, unit: 'đ' }
-                        };
-                    } else if (slot.id === 'necklace') {
-                        newItems[slot.id] = {
-                            name: `Dây Chuyền Hoàng Kim (${elemObj.name})`,
-                            element: currentElem,
-                            baseStats: [{ stat: 'Kháng Hỏa', val: 22, unit: '%' }],
-                            line1: { stat: 'Kháng Tất Cả', val: 25, unit: '%' },
-                            line2: { stat: 'Tỷ lệ chí mạng', val: 12, unit: '%' },
-                            line3: { stat: 'Sinh lực tối đa', val: 260, unit: 'đ' }
-                        };
-                    } else if (slot.id === 'ring1') {
-                        newItems[slot.id] = {
-                            name: `Nhẫn Trên (${elemObj.name})`,
-                            element: currentElem,
-                            baseStats: [{ stat: 'Nội lực', val: 160, unit: 'đ' }],
-                            line1: { stat: 'Kháng Độc (Mộc)', val: 32, unit: '%' },
-                            line2: { stat: 'Tốc độ di chuyển', val: 15, unit: '%' },
-                            line3: { stat: 'Sức mạnh', val: 35, unit: 'đ' }
-                        };
-                    } else if (slot.id === 'ring2') {
-                        newItems[slot.id] = {
-                            name: `Nhẫn Dưới (${elemObj.name})`,
-                            element: currentElem,
-                            baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }],
-                            line1: { stat: 'Kháng Băng (Thủy)', val: 32, unit: '%' },
-                            line2: { stat: 'Tốc độ đánh', val: 15, unit: '%' },
-                            line3: { stat: 'Thân pháp', val: 35, unit: 'đ' }
-                        };
-                    } else if (slot.id === 'pendant') {
-                        newItems[slot.id] = {
-                            name: `Ngọc Bội (${elemObj.name})`,
-                            element: currentElem,
-                            baseStats: [{ stat: 'Kháng Thủy', val: 22, unit: '%' }],
-                            line1: { stat: 'Kháng Tất Cả', val: 22, unit: '%' },
-                            line2: { stat: 'Thời gian trúng độc', val: -35, unit: '%' },
-                            line3: { stat: 'Phục hồi MP', val: 25, unit: 'đ' }
-                        };
-                    } else if (slot.id === 'gloves') {
-                        newItems[slot.id] = {
-                            name: `Bao Tay Hoàng Kim (${elemObj.name})`,
-                            element: currentElem,
-                            baseStats: [{ stat: 'Phòng thủ vật lý', val: 110, unit: 'đ' }],
-                            line1: { stat: 'Tốc độ đánh', val: 18, unit: '%' },
-                            line2: { stat: 'Kháng Hỏa', val: 32, unit: '%' },
-                            line3: { stat: 'Né tránh', val: 210, unit: 'đ' }
-                        };
-                    } else if (slot.id === 'belt') {
-                        newItems[slot.id] = {
-                            name: `Đai Lưng Hoàng Kim (${elemObj.name})`,
-                            element: currentElem,
-                            baseStats: [{ stat: 'Sinh khí', val: 140, unit: 'đ' }],
-                            line1: { stat: 'Kháng Băng (Thủy)', val: 32, unit: '%' },
-                            line2: { stat: 'Giảm làm chậm', val: 40, unit: 'đ' },
-                            line3: { stat: 'Thể lực', val: 70, unit: 'đ' }
-                        };
-                    } else {
-                        newItems[slot.id] = {
-                            name: `Giày Hoàng Kim (${elemObj.name})`,
-                            element: currentElem,
-                            baseStats: [{ stat: 'Tốc độ di chuyển', val: 42, unit: '%' }],
-                            line1: { stat: 'Kháng Lôi (Thổ)', val: 32, unit: '%' },
-                            line2: { stat: 'Sinh lực tối đa', val: 240, unit: 'đ' },
-                            line3: { stat: 'Giảm suy yếu', val: 40, unit: 'đ' }
-                        };
-                    }
-
-                    currentElem = elemObj.generates;
-                });
-
+                const newItems = generateFactionGearSet(faction);
                 setItems(newItems);
                 showToast(`Đã tự động đổi Set Đồ & Vòng Kích Full 100% cho phái ${faction.name} (${ELEMENTS[faction.element].name})!`);
             };
@@ -642,7 +428,7 @@
                             await signInAnonymously(auth);
                         }
                     } catch (err) {
-                        console.warn("Auth token failed, fallback to anonymous:", err);
+                        console.warn("Auth fallback to anonymous:", err);
                         await signInAnonymously(auth);
                     }
 
@@ -660,7 +446,6 @@
                 return () => window.removeEventListener('firebase-ready', initFirebase);
             }, []);
 
-            // Lấy danh sách Build Cloud của User
             const fetchUserCloudBuilds = (uid) => {
                 if (!window.FirebaseDB || !window.FirebaseSDK || !uid) return;
                 const { collection, onSnapshot } = window.FirebaseSDK;
@@ -675,7 +460,6 @@
                 }, (err) => console.error("Cloud fetch user build error:", err));
             };
 
-            // Lấy danh sách Build Public từ Cộng Đồng
             const fetchPublicCloudBuilds = () => {
                 if (!window.FirebaseDB || !window.FirebaseSDK) return;
                 const { collection, onSnapshot } = window.FirebaseSDK;
@@ -690,7 +474,6 @@
                 }, (err) => console.error("Cloud fetch public error:", err));
             };
 
-            // Lưu Build Hiện Tại Lên Cloud
             const handleSaveBuildToCloud = async (isPublic = false) => {
                 if (!currentUser || !window.FirebaseDB || !window.FirebaseSDK) {
                     showToast("Đang kết nối dịch vụ Cloud...");
@@ -712,7 +495,6 @@
                 };
 
                 try {
-                    // Save Private
                     const userColRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'builds');
                     await addDoc(userColRef, buildPayload);
 
@@ -733,7 +515,6 @@
 
             const activationStatus = useMemo(() => {
                 const status = {};
-                // Tùy biến kiểm tra kích ẩn theo cặp 2 món Tương Sinh
                 const slotActivatorMap = {
                     weapon: 'armor',
                     head: 'necklace',
@@ -763,33 +544,274 @@
                 });
                 return status;
             }, [items]);
-<!-- ... existing code ... bg-panelbg border border-slate-800 ... -->
-                                <button 
-                                    onClick={() => setActiveTab('sim')}
-                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
-                                        activeTab === 'sim' ? 'bg-amber-500 text-slate-950 border-yellow-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
-                                    }`}>
-                                    <i className="fa-solid fa-shield"></i>
-                                    <span>10 Món Kích Ẩn</span>
-                                </button>
 
-                                <button 
-                                    onClick={() => setActiveTab('chart_matrix')}
-                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
-                                        activeTab === 'chart_matrix' ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 border-yellow-300 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
-                                    }`}>
-                                    <i className="fa-solid fa-table-cells"></i>
-                                    <span>Bảng Ngũ Hành Cặp (Từ Ảnh)</span>
-                                </button>
+            const activatedCount = Object.values(activationStatus).filter(s => s.isActivated).length;
+            const activationPercentage = Math.round((activatedCount / 10) * 100);
 
+            const totalStats = useMemo(() => {
+                const totals = {
+                    khangTatCa: 0, khangKim: 0, khangMoc: 0, khangThuy: 0, khangHoa: 0, khangTho: 0,
+                    hp: 0, mp: 0, tocDoDanh: 0, tocDoDiChuyen: 0, giamChoang: 0, giamDoc: 0, giamLamCham: 0,
+                    chiMang: 0, stNgudHanh: 0, neTranh: 0
+                };
+
+                const parseAndAdd = (statName, val) => {
+                    const name = statName.toLowerCase();
+                    if (name.includes('kháng tất cả')) totals.khangTatCa += val;
+                    else if (name.includes('băng') || name.includes('thủy')) totals.khangThuy += val;
+                    else if (name.includes('lôi') || name.includes('thổ')) totals.khangTho += val;
+                    else if (name.includes('độc') || name.includes('mộc')) totals.khangMoc += val;
+                    else if (name.includes('hỏa')) totals.khangHoa += val;
+                    else if (name.includes('kim') || name.includes('vật lý phòng')) totals.khangKim += val;
+                    else if (name.includes('sinh khí') || name.includes('sinh lực')) totals.hp += val;
+                    else if (name.includes('nội lực')) totals.mp += val;
+                    else if (name.includes('tốc độ đánh')) totals.tocDoDanh += val;
+                    else if (name.includes('tốc độ di chuyển')) totals.tocDoDiChuyen += val;
+                    else if (name.includes('choáng')) totals.giamChoang += val;
+                    else if (name.includes('trúng độc')) totals.giamDoc += val;
+                    else if (name.includes('làm chậm')) totals.giamLamCham += val;
+                    else if (name.includes('chí mạng')) totals.chiMang += val;
+                    else if (name.includes('sát thương') || name.includes('ngũ hành')) totals.stNgudHanh += val;
+                    else if (name.includes('né tránh')) totals.neTranh += val;
+                };
+
+                Object.keys(items).forEach(slotId => {
+                    const item = items[slotId];
+                    const isAct = activationStatus[slotId]?.isActivated;
+                    item.baseStats.forEach(bs => parseAndAdd(bs.stat, Number(bs.val) || 0));
+                    if (isAct) {
+                        if (item.line1) parseAndAdd(item.line1.stat, Number(item.line1.val) || 0);
+                        if (item.line2) parseAndAdd(item.line2.stat, Number(item.line2.val) || 0);
+                        if (item.line3) parseAndAdd(item.line3.stat, Number(item.line3.val) || 0);
+                    }
+                });
+
+                return totals;
+            }, [items, activationStatus]);
+
+            const evaluation = useMemo(() => {
+                const avgKhang = totalStats.khangTatCa + Math.round((totalStats.khangKim + totalStats.khangMoc + totalStats.khangThuy + totalStats.khangHoa + totalStats.khangTho) / 5);
+                const ehp = Math.round(totalStats.hp * (1 + (avgKhang / 100)));
+                const score = Math.round(
+                    (totalStats.hp * 1.5) + (avgKhang * 120) + (totalStats.tocDoDanh * 80) +
+                    (totalStats.tocDoDiChuyen * 50) + (totalStats.stNgudHanh * 60) + (activatedCount * 500)
+                );
+                return { ehp, score };
+            }, [totalStats, activatedCount]);
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setUploadedImage(reader.result);
+                    analyzeEquipmentImage(reader.result);
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const analyzeEquipmentImage = async (base64Img) => {
+                setIsAnalyzing(true);
+                setAiAnalysisResult('');
+
+                try {
+                    const base64Data = base64Img.split(',')[1];
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                    const prompt = `Bạn là một game thủ Võ Lâm Truyền Kỳ / Tân Võ Lâm chuyên nghiệp. Hãy soi và phân tích bức ảnh chụp trang bị này:
+1. Tên món đồ, Phẩm chất, Hệ Ngũ Hành.
+2. Danh sách Dòng Hiện (Trắng) và Dòng Ẩn (Ngũ Hành).
+3. Đánh giá Dòng ngon (VIP) vs Dòng rác.
+4. Môn Phái nào dùng tốt nhất?
+5. Gợi ý Khảm Đá / Cường Hóa nâng cấp tối ưu.
+Viết ngắn gọn, chuyên nghiệp, dùng thuật ngữ game thủ Võ Lâm!`;
+
+                    const payload = {
+                        contents: [{
+                            role: "user",
+                            parts: [
+                                { text: prompt },
+                                { inlineData: { mimeType: "image/png", data: base64Data } }
+                            ]
+                        }]
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    const textResult = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (textResult) {
+                        setAiAnalysisResult(textResult);
+                    } else {
+                        setAiAnalysisResult("Không thể đọc được dữ liệu từ hình ảnh. Hãy chắc chắn ảnh chụp rõ tên và thuộc tính trang bị!");
+                    }
+                } catch (err) {
+                    console.error("AI Scan Error:", err);
+                    setAiAnalysisResult("Đã xảy ra lỗi khi kết nối với Trợ lý AI Soi Đồ. Hãy thử lại!");
+                } finally {
+                    setIsAnalyzing(false);
+                }
+            };
+
+            return (
+                <div className="max-w-7xl mx-auto px-4 py-6">
+                    {/* Toast Notification */}
+                    {toastMessage && (
+                        <div className="fixed top-5 right-5 z-50 bg-amber-500 text-slate-950 font-black px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-yellow-300">
+                            <i className="fa-solid fa-circle-check text-xl"></i>
+                            <span>{toastMessage}</span>
+                        </div>
+                    )}
+
+                    {/* Header Banner */}
+                    <header className="bg-panelbg border border-slate-800 rounded-3xl p-6 mb-6 shadow-2xl relative overflow-hidden">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+                            <div>
+                                <div className="flex items-center gap-2.5 mb-1.5">
+                                    <span className="bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-950 text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider shadow">
+                                        V3.5 Ultimate Gigantic
+                                    </span>
+                                    <span className="text-xs text-slate-400 font-medium">Cloud Save & Gemini AI Advisor</span>
+                                </div>
+                                <h1 className="text-2xl md:text-3xl font-black text-amber-400 tracking-tight flex items-center gap-3">
+                                    <i className="fa-solid fa-dragon text-amber-500"></i>
+                                    <span>TÂN VÕ LÂM GIGANTIC - PHÂN TÍCH PHỐI ĐỒ NGŨ HÀNH</span>
+                                </h1>
+                                <p className="text-slate-400 text-xs md:text-sm mt-1">
+                                    Môn phái ưu tiên mặc định: <strong className="text-emerald-400 font-bold">Đường Môn (Hệ Mộc)</strong> • Tự động kích full 10 món viên mãn!
+                                </p>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-3">
                                 <button 
-                                    onClick={() => setActiveTab('diagram')}
-                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
-                                        activeTab === 'diagram' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 border-yellow-300 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
-                                    }`}>
-                                    <i className="fa-solid fa-circle-nodes"></i>
-                                    <span>Sơ Đồ Ngũ Hành</span>
+                                    onClick={() => handleFactionSelect(selectedFaction)}
+                                    className="bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-black px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 text-xs border border-yellow-300">
+                                    <i className="fa-solid fa-wand-magic-sparkles"></i>
+                                    <span>Kích Full 100% Phái Này</span>
                                 </button>
+                                <button 
+                                    onClick={() => setActiveTab('cloud_saves')}
+                                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 text-xs border border-emerald-400/30">
+                                    <i className="fa-solid fa-cloud-arrow-up"></i>
+                                    <span>Lưu Cloud Online</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Thanh Chọn Nhanh 10 Môn Phái */}
+                        <div className="mt-6 pt-5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-bold text-slate-400 uppercase">Môn Phái:</span>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {FACTIONS.map(fac => {
+                                        const elem = ELEMENTS[fac.element];
+                                        const isSelected = selectedFaction.id === fac.id;
+                                        return (
+                                            <button
+                                                key={fac.id}
+                                                onClick={() => handleFactionSelect(fac)}
+                                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
+                                                    isSelected 
+                                                        ? `${elem.bg} ${elem.class} border-current shadow-lg scale-105 ring-1 ring-amber-400` 
+                                                        : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:border-slate-700'
+                                                }`}
+                                            >
+                                                <i className={`fa-solid ${fac.icon}`}></i>
+                                                <span>{fac.name}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Cấp độ Slider */}
+                            <div className="flex items-center gap-3 bg-slate-950 p-2 rounded-xl border border-slate-800">
+                                <span className="text-xs font-bold text-purple-400">Đẳng Cấp:</span>
+                                <input 
+                                    type="range" 
+                                    min="10" 
+                                    max="160" 
+                                    step="10" 
+                                    value={userLevel} 
+                                    onChange={(e) => setUserLevel(Number(e.target.value))}
+                                    className="w-24 accent-purple-500"
+                                />
+                                <span className="text-xs font-black text-amber-300 w-12 text-center">Lv.{userLevel}</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+                        <button 
+                            onClick={() => setActiveTab('sim')}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                activeTab === 'sim' ? 'bg-amber-500 text-slate-950 border-yellow-300 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                            }`}>
+                            <i className="fa-solid fa-shield"></i>
+                            <span>10 Món Kích Ẩn</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setActiveTab('chart_matrix')}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                activeTab === 'chart_matrix' ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 border-yellow-300 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                            }`}>
+                            <i className="fa-solid fa-table-cells"></i>
+                            <span>Bảng Ngũ Hành Cặp (Từ Ảnh)</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setActiveTab('diagram')}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                activeTab === 'diagram' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 border-yellow-300 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                            }`}>
+                            <i className="fa-solid fa-circle-nodes"></i>
+                            <span>Sơ Đồ Ngũ Hành</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setActiveTab('level_guide')}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                activeTab === 'level_guide' ? 'bg-purple-600 text-white border-purple-400 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                            }`}>
+                            <i className="fa-solid fa-arrow-trend-up"></i>
+                            <span>Gợi Ý Lên Cấp</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setActiveTab('ai_scan')}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                activeTab === 'ai_scan' ? 'bg-cyan-600 text-white border-cyan-400 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                            }`}>
+                            <i className="fa-solid fa-robot"></i>
+                            <span>Soi Đồ AI Gemini</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setActiveTab('cloud_saves')}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                activeTab === 'cloud_saves' ? 'bg-emerald-600 text-white border-emerald-400 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                            }`}>
+                            <i className="fa-solid fa-cloud"></i>
+                            <span>Kho Build Cloud</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setActiveTab('forge')}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                activeTab === 'forge' ? 'bg-red-600 text-white border-red-400 shadow-lg font-black' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                            }`}>
+                            <i className="fa-solid fa-hammer"></i>
+                            <span>Bảng Cường Hóa</span>
+                        </button>
+                    </div>
 
                     {/* TAB BẢNG NGŨ HÀNH CẶP THEO ẢNH UPLOAD */}
                     {activeTab === 'chart_matrix' && (
@@ -809,7 +831,6 @@
                                         </p>
                                     </div>
 
-                                    {/* Chọn Hệ Vũ Khí */}
                                     <div className="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
                                         <span className="text-xs font-bold text-amber-400">Chọn Vũ Khí:</span>
                                         {Object.keys(PAIR_CONFIGS).map(eKey => {
@@ -831,7 +852,6 @@
                                     </div>
                                 </div>
 
-                                {/* Khung Bảng Chuẩn Giống Ảnh Upload */}
                                 {(() => {
                                     const cfg = PAIR_CONFIGS[selectedPairWeaponElem];
                                     return (
@@ -916,10 +936,8 @@
                         </div>
                     )}
 
-                    {/* TAB SƠ ĐỒ NGŨ HÀNH & TRẬN ĐỒ KÍCH ẨN */}
                     {activeTab === 'diagram' && (
                         <div className="space-y-6 max-w-5xl mx-auto">
-                            {/* VÒNG TRÒN NGŨ HÀNH TƯƠNG SINH TƯƠNG KHẮC */}
                             <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
                                 <div className="text-center max-w-xl mx-auto mb-6">
                                     <span className="bg-amber-500/20 text-amber-400 text-[10px] font-black px-2.5 py-1 rounded uppercase tracking-wider border border-amber-500/30">
@@ -934,7 +952,6 @@
                                 </div>
 
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-                                    {/* MINH HỌA VÒNG TRÒN VÀ CHUỖI TƯƠNG SINH */}
                                     <div className="bg-slate-950/80 p-6 rounded-2xl border border-slate-800/80 flex flex-col items-center justify-center relative">
                                         <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                                             <i className="fa-solid fa-rotate text-amber-400"></i>
@@ -977,7 +994,6 @@
                                         </div>
                                     </div>
 
-                                    {/* DIỄN GIẢI QUY LUẬT TƯƠNG KHẮC */}
                                     <div className="space-y-3 text-xs">
                                         <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-2">
                                             <div className="font-bold text-red-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -1010,73 +1026,9 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {/* SƠ ĐỒ CHUỖI TRẬN ĐỒ 10 MÓN ĐANG MẶC */}
-                            <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl">
-                                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-                                    <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                                        <i className="fa-solid fa-link"></i>
-                                        <span>CHUYỂN GIAO KÍCH ẨN TRỰC TIẾP TRÊN BỘ ĐỒ HIỆN TẠI</span>
-                                    </h3>
-                                    <span className="text-xs text-slate-400">Tự động kiểm tra trạng thái tương sinh thực tế</span>
-                                </div>
-
-                                <div className="space-y-2">
-                                    {SLOT_CHAIN.map((slot, index) => {
-                                        const item = items[slot.id];
-                                        const elem = ELEMENTS[item.element];
-                                        const actStatus = activationStatus[slot.id];
-                                        const nextSlotConfig = SLOT_CHAIN.find(s => s.id === slot.activatesSlot);
-                                        const nextItem = items[nextSlotConfig.id];
-                                        const nextElem = ELEMENTS[nextItem.element];
-                                        const isGeneratesNext = elem.generates === nextItem.element;
-
-                                        return (
-                                            <div 
-                                                key={slot.id} 
-                                                className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 text-xs"
-                                            >
-                                                <div className="flex items-center gap-3 w-48">
-                                                    <span className="w-5 h-5 rounded-full bg-slate-900 text-slate-400 font-bold flex items-center justify-center text-[10px]">
-                                                        {index + 1}
-                                                    </span>
-                                                    <div className="flex items-center gap-2">
-                                                        <i className={`fa-solid ${slot.icon} ${elem.class}`}></i>
-                                                        <span className="font-bold text-white">{slot.name}</span>
-                                                    </div>
-                                                    <span className={`text-[10px] font-black px-1.5 py-0.2 rounded border ${elem.bg} ${elem.class}`}>
-                                                        {elem.name}
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex items-center gap-2 text-slate-400 font-medium">
-                                                    <span>kích ẩn cho món tiếp theo</span>
-                                                    <i className={`fa-solid fa-arrow-right ${isGeneratesNext ? 'text-emerald-400' : 'text-red-500'}`}></i>
-                                                </div>
-
-                                                <div className="flex items-center gap-3 w-56 justify-end">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <i className={`fa-solid ${nextSlotConfig.icon} ${nextElem.class}`}></i>
-                                                        <span className="font-bold text-slate-200">{nextSlotConfig.name}</span>
-                                                    </div>
-                                                    <span className={`text-[10px] font-black px-1.5 py-0.2 rounded border ${nextElem.bg} ${nextElem.class}`}>
-                                                        {nextElem.name}
-                                                    </span>
-                                                    {isGeneratesNext ? (
-                                                        <span className="text-emerald-400 font-bold text-[11px] bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/40">✓ Chuẩn</span>
-                                                    ) : (
-                                                        <span className="text-red-400 font-bold text-[11px] bg-red-950/80 px-2 py-0.5 rounded border border-red-500/40">✗ Lệch Hệ</span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
                         </div>
                     )}
 
-                    {/* TAB 1: PHÂN TÍCH 10 MÓN ĐỒ */}
                     {activeTab === 'sim' && (
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                             <div className="lg:col-span-8 space-y-6">
@@ -1264,7 +1216,6 @@
                         </div>
                     )}
 
-                    {/* TAB 2: GỢI Ý KHI LÊN CẤP */}
                     {activeTab === 'level_guide' && (
                         <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-4xl mx-auto space-y-6">
                             <div className="text-center max-w-xl mx-auto">
@@ -1309,7 +1260,7 @@
                                 <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
                                     <h3 className="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2">
                                         <i className="fa-solid fa-trophy"></i>
-                                        <span>Mốc Cột Mốc Mục Tiêu Đồ Theo Cấp</span>
+                                        <span>Cột Mốc Mục Tiêu Đồ Theo Cấp</span>
                                     </h3>
                                     <div className="space-y-2 text-xs">
                                         <div className={`p-2.5 rounded-xl border ${userLevel >= 30 ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-500'}`}>
@@ -1327,7 +1278,6 @@
                         </div>
                     )}
 
-                    {/* TAB 3: SOI ĐỒ AI */}
                     {activeTab === 'ai_scan' && (
                         <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-4xl mx-auto space-y-6">
                             <div className="text-center max-w-xl mx-auto">
@@ -1372,7 +1322,7 @@
                             {isAnalyzing && (
                                 <div className="bg-slate-900/80 border border-cyan-500/40 p-6 rounded-2xl text-center space-y-3">
                                     <i className="fa-solid fa-spinner fa-spin text-3xl text-cyan-400"></i>
-                                    <div className="text-xs font-bold text-cyan-300">Đang quét ảnh & soi dòng thuộc tính trang bị bằng AI...</div>
+                                    <div className="text-xs font-bold text-cyan-300">Đang quét ảnh & soi dòng thuộc tính trang bị bằng AI Gemini...</div>
                                 </div>
                             )}
 
@@ -1396,7 +1346,6 @@
                         </div>
                     )}
 
-                    {/* TAB 4: KHO BUILD CLOUD ONLINE */}
                     {activeTab === 'cloud_saves' && (
                         <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-5xl mx-auto space-y-6">
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-800">
@@ -1427,7 +1376,6 @@
                                 </div>
                             </div>
 
-                            {/* Section Cloud User */}
                             <div className="space-y-3">
                                 <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
                                     <i className="fa-solid fa-user-lock"></i>
@@ -1464,7 +1412,6 @@
                                 )}
                             </div>
 
-                            {/* Section Public Builds */}
                             <div className="space-y-3 pt-4 border-t border-slate-800">
                                 <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
                                     <i className="fa-solid fa-globe"></i>
@@ -1497,7 +1444,6 @@
                         </div>
                     )}
 
-                    {/* TAB 5: BẢNG CƯỜNG HÓA */}
                     {activeTab === 'forge' && (
                         <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-4xl mx-auto space-y-6">
                             <div className="text-center max-w-xl mx-auto">
@@ -1560,7 +1506,6 @@
             );
         }
 
-        // Modal Component Edit Item
         function ModalEditItem({ slot, item, onClose, onSave }) {
             const [formData, setFormData] = useState({ ...item });
 
