@@ -150,6 +150,40 @@
 
         // Mẫu Trang Bị Theo Set
         const GEAR_SETS = {
+            anbang_dm: {
+                id: 'anbang_dm',
+                name: 'Set An Bang + Định Quốc (Đường Môn Sinh Tồn Kháng TC)',
+                desc: 'Phù hợp Đường Môn PK Tống Kim & Công Thành. Ép Kháng Tất Cả, Máu Tối Đa và Tốc Độ Di Chuyển.',
+                items: {
+                    weapon: { name: 'Bão Vũ Bát Sát Nỏ (Mộc)', element: 'moc', baseStats: [{ stat: 'Sát thương Vật Lý', val: 155, unit: '%' }, { stat: 'Tốc độ đánh', val: 35, unit: '%' }], line1: { stat: 'Độc Sát Ngũ Hành', val: 120, unit: 'đ' }, line2: { stat: 'Tỷ lệ chí mạng', val: 18, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 7, unit: '%' } },
+                    armor: { name: 'Áo Lam Ngữ Hoàng Kim (Thủy)', element: 'thuy', baseStats: [{ stat: 'Sinh khí', val: 190, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Giảm thời gian choáng', val: 45, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 25, unit: 'đ' } },
+                    head: { name: 'Mão Tử Mãng Hoàng Kim (Mộc)', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 35, unit: '%' }, line2: { stat: 'Giảm độc tố', val: 45, unit: 'đ' }, line3: { stat: 'Né tránh', val: 220, unit: 'đ' } },
+                    necklace: { name: 'Dây Chuyền An Bang (Hỏa)', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 25, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Tỷ lệ chí mạng', val: 15, unit: '%' }, line3: { stat: 'Sinh lực tối đa', val: 280, unit: 'đ' } },
+                    ring1: { name: 'Nhẫn An Bang Trên (Thổ)', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 160, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 35, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 18, unit: '%' }, line3: { stat: 'Thân pháp', val: 45, unit: 'đ' } },
+                    ring2: { name: 'Nhẫn An Bang Dưới (Kim)', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 35, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 45, unit: 'đ' }, line3: { stat: 'Sức mạnh', val: 35, unit: 'đ' } },
+                    pendant: { name: 'Ngọc Bội Định Quốc (Thủy)', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 22, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 22, unit: '%' }, line2: { stat: 'Thời gian trúng độc', val: -40, unit: '%' }, line3: { stat: 'Phục hồi MP', val: 30, unit: 'đ' } },
+                    gloves: { name: 'Bao Tay Định Quốc (Mộc)', element: 'moc', baseStats: [{ stat: 'Phòng thủ vật lý', val: 120, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 18, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 35, unit: '%' }, line3: { stat: 'Né tránh', val: 240, unit: 'đ' } },
+                    belt: { name: 'Đai Lưng An Bang (Hỏa)', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 140, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 35, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 40, unit: 'đ' }, line3: { stat: 'Thể lực', val: 80, unit: 'đ' } },
+                    boots: { name: 'Giày Định Quốc (Thổ)', element: 'tho', baseStats: [{ stat: 'Tốc độ di chuyển', val: 45, unit: '%' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 35, unit: '%' }, line2: { stat: 'Sinh lực tối đa', val: 250, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 40, unit: 'đ' } }
+                }
+            },
+            nhutinh_hiepcot_dm: {
+                id: 'nhutinh_hiepcot_dm',
+                name: 'Set Nhu Tình + Hiệp Cốt (Đường Môn Bão Vũ Tốc Đánh & Bạo Kích)',
+                desc: 'Phù hợp Đường Môn Sát Thủ dồn dame đơn mục tiêu / Boss. Max Tốc đánh 80%+, Bạo kích & Độc sát.',
+                items: {
+                    weapon: { name: 'Vương Ảo Nỏ Tụ Sát (Mộc)', element: 'moc', baseStats: [{ stat: 'Sát thương Vật Lý', val: 165, unit: '%' }, { stat: 'Tốc độ đánh', val: 40, unit: '%' }], line1: { stat: 'Độc Sát Ngũ Hành', val: 140, unit: 'đ' }, line2: { stat: 'Tỷ lệ chí mạng', val: 20, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 8, unit: '%' } },
+                    armor: { name: 'Áo Nhu Tình Hoàng Kim (Thủy)', element: 'thuy', baseStats: [{ stat: 'Sinh lực', val: 230, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 30, unit: '%' }, line2: { stat: 'Giảm choáng', val: 50, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 35, unit: 'đ' } },
+                    head: { name: 'Nón Hiệp Cốt Hoàng Kim (Mộc)', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 190, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 40, unit: '%' }, line2: { stat: 'Chí mạng', val: 18, unit: '%' }, line3: { stat: 'Thân pháp', val: 40, unit: 'đ' } },
+                    necklace: { name: 'Dây Chuyền Nhu Tình (Hỏa)', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 28, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 22, unit: '%' }, line3: { stat: 'Tỷ lệ Bạo kích', val: 20, unit: '%' } },
+                    ring1: { name: 'Nhẫn Hiệp Cốt Trên (Thổ)', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 38, unit: '%' }, line2: { stat: 'Độc Sát Ngũ Hành', val: 90, unit: 'đ' }, line3: { stat: 'Thân pháp', val: 45, unit: 'đ' } },
+                    ring2: { name: 'Nhẫn Nhu Tình Dưới (Kim)', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 38, unit: '%' }, line2: { stat: 'Tốc độ đánh', val: 20, unit: '%' }, line3: { stat: 'Sức mạnh', val: 40, unit: 'đ' } },
+                    pendant: { name: 'Ngọc Bội Hiệp Cốt (Thủy)', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 25, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 25, unit: '%' }, line2: { stat: 'Thời gian trúng độc', val: -45, unit: '%' }, line3: { stat: 'Phục hồi MP', val: 35, unit: 'đ' } },
+                    gloves: { name: 'Bao Tay Nhu Tình (Mộc)', element: 'moc', baseStats: [{ stat: 'Phòng thủ vật lý', val: 130, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 22, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 38, unit: '%' }, line3: { stat: 'Né tránh', val: 280, unit: 'đ' } },
+                    belt: { name: 'Đai Lưng Hiệp Cốt (Hỏa)', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 160, unit: 'đ' }], line1: { stat: 'Kháng Băng', val: 38, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 50, unit: 'đ' }, line3: { stat: 'Thể lực', val: 90, unit: 'đ' } },
+                    boots: { name: 'Giày Nhu Tình (Thổ)', element: 'tho', baseStats: [{ stat: 'Tốc độ di chuyển', val: 48, unit: '%' }], line1: { stat: 'Kháng Lôi', val: 38, unit: '%' }, line2: { stat: 'Sinh lực tối đa', val: 300, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 50, unit: 'đ' } }
+                }
+            },
             anbang_dinhquoc: {
                 id: 'anbang_dinhquoc',
                 name: 'Set An Bang + Định Quốc (Hoàng Kim Standard)',
@@ -956,7 +990,7 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                             </div>
                             <div>
                                 <div className="text-xs text-amber-400 font-bold uppercase tracking-wider">Đổi Nhanh Set Trang Bị Chuẩn Võ Lâm:</div>
-                                <div className="text-xs text-slate-300 mt-0.5">Khoác các bộ đồ đã tối ưu sẵn để xem ngay chỉ số kích hoạt.</div>
+                                <div className="text-xs text-slate-300 mt-0.5">Khoác các bộ đồ đã tối ưu sẵn cho Đường Môn & Môn Phái để xem ngay chỉ số.</div>
                             </div>
                         </div>
 
@@ -965,13 +999,72 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                 <button 
                                     key={sKey}
                                     onClick={() => handleApplyGearSet(sKey)}
-                                    className="bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700 hover:border-amber-500 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                                    <i className="fa-solid fa-gem text-amber-400"></i>
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
+                                        sKey.includes('_dm') 
+                                            ? 'bg-emerald-950/80 hover:bg-emerald-900 border-emerald-500/60 text-emerald-300 shadow-lg' 
+                                            : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border-slate-700 hover:border-amber-500'
+                                    }`}>
+                                    <i className={`fa-solid ${sKey.includes('_dm') ? 'fa-crosshairs text-emerald-400' : 'fa-gem text-amber-400'}`}></i>
                                     <span>{GEAR_SETS[sKey].name}</span>
                                 </button>
                             ))}
                         </div>
                     </div>
+
+                    {/* BẢNG BÍ KÍP PHỐI ĐỒ ĐƯỜNG MÔN */}
+                    {selectedFaction.id === 'dm' && (
+                        <div className="bg-gradient-to-r from-emerald-950/40 via-slate-900 to-teal-950/40 border border-emerald-500/40 rounded-2xl p-5 mb-6 shadow-2xl relative overflow-hidden">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase">Bí Kíp Đường Môn</span>
+                                        <h3 className="text-sm font-black text-emerald-400 uppercase tracking-wide">
+                                            Phân Tích Chi Tiết Set An Bang vs Set Nhu Tình + Hiệp Cốt
+                                        </h3>
+                                    </div>
+                                    <p className="text-xs text-slate-300">
+                                        Tùy thuộc vào phong cách thi đấu: **Kháng Trâu Bền Bỉ (An Bang)** hay **Sát Thủ Dồn Dame Chí Mạng (Nhu Tình + Hiệp Cốt)**.
+                                    </p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={() => handleApplyGearSet('anbang_dm')}
+                                        className="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+                                        <i className="fa-solid fa-shield"></i> Mặc Set An Bang ĐM
+                                    </button>
+                                    <button 
+                                        onClick={() => handleApplyGearSet('nhutinh_hiepcot_dm')}
+                                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+                                        <i className="fa-solid fa-bolt"></i> Mặc Set Nhu Tình ĐM
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-emerald-900/60 text-xs">
+                                <div className="bg-slate-950/80 p-3.5 rounded-xl border border-emerald-800/60 space-y-2">
+                                    <div className="font-bold text-amber-400 flex items-center gap-1.5">
+                                        <i className="fa-solid fa-shield-halved"></i> 1. Set An Bang + Định Quốc (Trận Đấu Lớn / Tống Kim)
+                                    </div>
+                                    <ul className="text-slate-300 space-y-1 list-disc list-inside text-[11px]">
+                                        <li><strong>Ưu điểm:</strong> Ép Kháng Tất Cả tới 70-80%+, Máu cực trâu, Giảm thời gian trúng độc & làm chậm.</li>
+                                        <li><strong>Phù hợp:</strong> Đường Môn Bẫy, Đường Môn Tống Kim đánh đông người, cần trụ lâu rải bẫy.</li>
+                                        <li><strong>Điểm nhấn:</strong> Kết hợp Vũ khí Mộc + Mão/Bao tay Định Quốc Mộc để kích 100% Ẩn.</li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-slate-950/80 p-3.5 rounded-xl border border-emerald-800/60 space-y-2">
+                                    <div className="font-bold text-cyan-400 flex items-center gap-1.5">
+                                        <i className="fa-solid fa-burst"></i> 2. Set Nhu Tình + Hiệp Cốt (PK 1v1 / Săn Boss / Bão Vũ)
+                                    </div>
+                                    <ul className="text-slate-300 space-y-1 list-disc list-inside text-[11px]">
+                                        <li><strong>Ưu điểm:</strong> Tốc độ đánh max mốc (70-80%+), Tỷ lệ Bạo kích & Độc Sát vượt trội dồn gục đối thủ cực nhanh.</li>
+                                        <li><strong>Phù hợp:</strong> Đường Môn Bão Vũ Liễu Diệp, Đường Môn Nỏ Tụ Sát dồn dame sinh tồn ngắn.</li>
+                                        <li><strong>Điểm nhấn:</strong> Đẩy Thân Pháp lên mức 300+ để tận dụng tối đa điểm bạo kích của Hiệp Cốt.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* TAB 1: PHÂN TÍCH 10 MÓN ĐỒ */}
                     {activeTab === 'sim' && (
