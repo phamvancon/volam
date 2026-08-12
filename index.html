@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tân Võ Lâm Gigantic V3 - Phân Tích Phối Đồ & Soi Đồ AI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Be Vietnam Pro & Cinzel -->
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+    <!-- React & Babel CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Be Vietnam Pro', 'sans-serif'],
+                        title: ['Cinzel', 'serif'],
+                    },
+                    colors: {
+                        kim: '#f59e0b',   // Vàng Kim
+                        moc: '#10b981',   // Xanh Mộc
+                        thuy: '#06b6d4',  // Xanh Thủy
+                        hoa: '#ef4444',   // Đỏ Hỏa
+                        tho: '#d97706',   // Nâu Thổ
+                        gold: '#fbbf24',
+                        darkbg: '#06080d',
+                        panelbg: '#0f172a',
+                        cardbg: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #06080d;
+            color: #f1f5f9;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(245, 158, 11, 0.08) 0px, transparent 40%),
+                radial-gradient(at 90% 90%, rgba(6, 182, 212, 0.08) 0px, transparent 40%),
+                radial-gradient(#1e293b 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 28px 28px;
+        }
+
+        .element-kim { color: #f59e0b; border-color: #f59e0b; }
+        .element-moc { color: #10b981; border-color: #10b981; }
+        .element-thuy { color: #06b6d4; border-color: #06b6d4; }
+        .element-hoa { color: #ef4444; border-color: #ef4444; }
+        .element-tho { color: #d97706; border-color: #d97706; }
+
+        .bg-element-kim { background: rgba(245, 158, 11, 0.15); }
+        .bg-element-moc { background: rgba(16, 185, 129, 0.15); }
+        .bg-element-thuy { background: rgba(6, 182, 212, 0.15); }
+        .bg-element-hoa { background: rgba(239, 68, 68, 0.15); }
+        .bg-element-tho { background: rgba(217, 119, 6, 0.15); }
+
+        .glow-kim { box-shadow: 0 0 16px rgba(245, 158, 11, 0.4); }
+        .glow-moc { box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); }
+        .glow-thuy { box-shadow: 0 0 16px rgba(6, 182, 212, 0.4); }
+        .glow-hoa { box-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
+        .glow-tho { box-shadow: 0 0 16px rgba(217, 119, 6, 0.4); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #06080d; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="min-h-screen pb-16">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // Dữ liệu Ngũ Hành Tương Sinh
+        const ELEMENTS = {
+            kim: { id: 'kim', name: 'Kim', color: '#f59e0b', icon: 'fa-coins', generates: 'thuy', generatedBy: 'tho', class: 'element-kim', bg: 'bg-element-kim', glow: 'glow-kim' },
+            moc: { id: 'moc', name: 'Mộc', color: '#10b981', icon: 'fa-tree', generates: 'hoa', generatedBy: 'thuy', class: 'element-moc', bg: 'bg-element-moc', glow: 'glow-moc' },
+            thuy: { id: 'thuy', name: 'Thủy', color: '#06b6d4', icon: 'fa-droplet', generates: 'moc', generatedBy: 'kim', class: 'element-thuy', bg: 'bg-element-thuy', glow: 'glow-thuy' },
+            hoa: { id: 'hoa', name: 'Hỏa', color: '#ef4444', icon: 'fa-fire', generates: 'tho', generatedBy: 'moc', class: 'element-hoa', bg: 'bg-element-hoa', glow: 'glow-hoa' },
+            tho: { id: 'tho', name: 'Thổ', color: '#d97706', icon: 'fa-mountain', generates: 'kim', generatedBy: 'hoa', class: 'element-tho', bg: 'bg-element-tho', glow: 'glow-tho' }
+        };
+
+        // Danh sách Môn Phái Chuẩn Tân Võ Lâm
+        const FACTIONS = [
+            { id: 'tl', name: 'Thiếu Lâm', element: 'kim', type: 'Ngoại Công', icon: 'fa-hands-praying', desc: 'Đao/Bổng/Quyền - Trâu bò, Phản Sát Thương', prio: 'Tốc đánh, Sinh lực, Kháng tất cả, Phản sát thương' },
+            { id: 'tv', name: 'Thiên Vương', element: 'kim', type: 'Ngoại Công', icon: 'fa-shield-halved', desc: 'Thương/Chùy/Đao - Dồn ST Mạnh, Giảm choáng', prio: 'Sát thương VL, Tốc đánh, Tỷ lệ chí mạng, Hút sinh lực' },
+            { id: 'dm', name: 'Đường Môn', element: 'moc', type: 'Ngoại Công', icon: 'fa-crosshairs', desc: 'Nỏ/Bẫy/Bão Vũ - Cơ Động, Chí Mạng Cao', prio: 'Bạo kích, Tốc độ di chuyển, Thân pháp, Độc sát' },
+            { id: '5d', name: 'Ngũ Độc', element: 'moc', type: 'Nội/Ngoại', icon: 'fa-skull-crossbones', desc: 'Đao/Chưởng - Rút Máu Độc Tố Sâu', prio: 'Sát thương Độc tố, Giảm thời gian độc, Né tránh' },
+            { id: 'nm', name: 'Nga My', element: 'thuy', type: 'Nội Công', icon: 'fa-wand-magic-sparkles', desc: 'Kiếm/Chưởng - Buff Hỗ Trợ, Làm Chậm', prio: 'Băng sát, Hồi phục HP/MP, Tốc độ di chuyển, Kháng tất cả' },
+            { id: 'ty', name: 'Thúy Yên', element: 'thuy', type: 'Nội/Ngoại', icon: 'fa-fan', desc: 'Đao/Đơn Kiếm - Băng Tốc, Khống Chế', prio: 'Băng sát, Tốc độ đánh, Tỷ lệ làm chậm, Né tránh' },
+            { id: 'cb', name: 'Cái Bang', element: 'hoa', type: 'Ngoại/Nội', icon: 'fa-wine-bottle', desc: 'Bổng/Chưởng - Né Tránh & Sát Thương Rộng', prio: 'Hỏa sát, Né tránh, Tốc độ đánh, Chí mạng' },
+            { id: 'tn', name: 'Thiên Nhẫn', element: 'hoa', type: 'Nội/Ngoại', icon: 'fa-khanda', desc: 'Đao/Kích - Bùa Chú, Hút Sinh Lực', prio: 'Hỏa sát, Hút HP/MP, Tốc độ đánh, Giảm choáng' },
+            { id: 'vd', name: 'Võ Đang', element: 'tho', type: 'Nội Công', icon: 'fa-yin-yang', desc: 'Quyền/Kiếm - Tụ Khí Thành Khiên, Choáng', prio: 'Lôi sát, Tụ khí MP, Tỷ lệ choáng, Nội lực tối đa' },
+            { id: 'cl', name: 'Côn Lôn', element: 'tho', type: 'Nội/Ngoại', icon: 'fa-bolt', desc: 'Đao/Kiếm - Lôi Sát Thương, Buff Tốc Độ', prio: 'Lôi sát, Tốc độ di chuyển, Chí mạng, Kháng tất cả' }
+        ];
+
+        // Chuỗi Vòng Tròn 10 Món Kích Ẩn Chuẩn JX1
+        const SLOT_CHAIN = [
+            { id: 'weapon', name: 'Vũ Khí', icon: 'fa-sword', activatesSlot: 'armor' },
+            { id: 'armor', name: 'Áo Giáp', icon: 'fa-user-shield', activatesSlot: 'head' },
+            { id: 'head', name: 'Nón / Mão', icon: 'fa-hat-wizard', activatesSlot: 'necklace' },
+            { id: 'necklace', name: 'Dây Chuyền', icon: 'fa-gem', activatesSlot: 'ring1' },
+            { id: 'ring1', name: 'Nhẫn Trên', icon: 'fa-ring', activatesSlot: 'ring2' },
+            { id: 'ring2', name: 'Nhẫn Dưới', icon: 'fa-ring', activatesSlot: 'pendant' },
+            { id: 'pendant', name: 'Ngọc Bội', icon: 'fa-bookmark', activatesSlot: 'gloves' },
+            { id: 'gloves', name: 'Bao Tay', icon: 'fa-mitten', activatesSlot: 'belt' },
+            { id: 'belt', name: 'Đai Lưng', icon: 'fa-scroll', activatesSlot: 'boots' },
+            { id: 'boots', name: 'Giày', icon: 'fa-shoe-prints', activatesSlot: 'weapon' }
+        ];
+
+        // Trang bị mặc định
+        const DEFAULT_ITEMS = {
+            weapon: { name: 'Thái Hư Kiếm Hoàng Kim', element: 'kim', baseStats: [{ stat: 'Sát thương Vật Lý', val: 145, unit: '%' }], line1: { stat: 'Sát thương Ngũ Hành', val: 98, unit: 'đ' }, line2: { stat: 'Tốc độ đánh', val: 30, unit: '%' }, line3: { stat: 'Hút Sinh Lực', val: 6, unit: '%' } },
+            armor: { name: 'Áo Lam Ngữ Hoàng Kim', element: 'thuy', baseStats: [{ stat: 'Sinh khí', val: 180, unit: 'đ' }], line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' }, line2: { stat: 'Giảm thời gian choáng', val: 40, unit: 'đ' }, line3: { stat: 'Phục hồi HP', val: 20, unit: 'đ' } },
+            head: { name: 'Mão Tử Mãng Hoàng Kim', element: 'moc', baseStats: [{ stat: 'Sinh lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 35, unit: '%' }, line2: { stat: 'Giảm độc tố', val: 40, unit: 'đ' }, line3: { stat: 'Né tránh', val: 120, unit: 'đ' } },
+            necklace: { name: 'Dây Chuyền An Bang', element: 'hoa', baseStats: [{ stat: 'Kháng Hỏa', val: 20, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 25, unit: '%' }, line2: { stat: 'Tỷ lệ chí mạng', val: 12, unit: '%' }, line3: { stat: 'Sinh lực tối đa', val: 250, unit: 'đ' } },
+            ring1: { name: 'Nhẫn An Bang Trên', element: 'tho', baseStats: [{ stat: 'Nội lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Độc (Mộc)', val: 30, unit: '%' }, line2: { stat: 'Tốc độ di chuyển', val: 15, unit: '%' }, line3: { stat: 'Sức mạnh', val: 30, unit: 'đ' } },
+            ring2: { name: 'Nhẫn An Bang Dưới', element: 'kim', baseStats: [{ stat: 'Sinh lực', val: 150, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 30, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 40, unit: 'đ' }, line3: { stat: 'Thân pháp', val: 30, unit: 'đ' } },
+            pendant: { name: 'Ngọc Bội Định Quốc', element: 'thuy', baseStats: [{ stat: 'Kháng Thủy', val: 20, unit: '%' }], line1: { stat: 'Kháng Tất Cả', val: 20, unit: '%' }, line2: { stat: 'Thời gian trúng độc', val: -35, unit: '%' }, line3: { stat: 'Phục hồi MP', val: 25, unit: 'đ' } },
+            gloves: { name: 'Bao Tay Định Quốc', element: 'moc', baseStats: [{ stat: 'Phòng thủ vật lý', val: 100, unit: 'đ' }], line1: { stat: 'Tốc độ đánh', val: 15, unit: '%' }, line2: { stat: 'Kháng Hỏa', val: 30, unit: '%' }, line3: { stat: 'Né tránh', val: 200, unit: 'đ' } },
+            belt: { name: 'Đai Lưng An Bang', element: 'hoa', baseStats: [{ stat: 'Sinh khí', val: 120, unit: 'đ' }], line1: { stat: 'Kháng Băng (Thủy)', val: 30, unit: '%' }, line2: { stat: 'Giảm làm chậm', val: 35, unit: 'đ' }, line3: { stat: 'Thể lực', val: 60, unit: 'đ' } },
+            boots: { name: 'Giày Định Quốc', element: 'tho', baseStats: [{ stat: 'Tốc độ di chuyển', val: 40, unit: '%' }], line1: { stat: 'Kháng Lôi (Thổ)', val: 30, unit: '%' }, line2: { stat: 'Sinh lực tối đa', val: 220, unit: 'đ' }, line3: { stat: 'Giảm suy yếu', val: 35, unit: 'đ' } }
+        };
+
+        function App() {
+            const [selectedFaction, setSelectedFaction] = useState(FACTIONS[8]); // Võ Đang
+            const [items, setItems] = useState(DEFAULT_ITEMS);
+            const [activeTab, setActiveTab] = useState('sim'); // sim, ai_scan, forge, factions
+            const [editingSlot, setEditingSlot] = useState(null);
+            const [shareCode, setShareCode] = useState('');
+            const [showShareModal, setShowShareModal] = useState(false);
+            const [toastMessage, setToastMessage] = useState('');
+
+            // AI Scan states
+            const [uploadedImage, setUploadedImage] = useState(null);
+            const [aiAnalysisResult, setAiAnalysisResult] = useState('');
+            const [isAnalyzing, setIsAnalyzing] = useState(false);
+            const fileInputRef = useRef(null);
+
+            const showToast = (msg) => {
+                setToastMessage(msg);
+                setTimeout(() => setToastMessage(''), 3000);
+            };
+
+            // Tính toán trạng thái Kích Ẩn
+            const activationStatus = useMemo(() => {
+                const status = {};
+                SLOT_CHAIN.forEach(slot => {
+                    const activatorSlotConfig = SLOT_CHAIN.find(s => s.activatesSlot === slot.id);
+                    if (activatorSlotConfig) {
+                        const activatorItem = items[activatorSlotConfig.id];
+                        const currentItem = items[slot.id];
+                        if (activatorItem && currentItem) {
+                            const actElement = ELEMENTS[activatorItem.element];
+                            const isActivated = actElement.generates === currentItem.element;
+                            status[slot.id] = {
+                                isActivated,
+                                activatedBySlot: activatorSlotConfig.id,
+                                requiredElement: actElement.id
+                            };
+                        }
+                    }
+                });
+                return status;
+            }, [items]);
+
+            const activatedCount = Object.values(activationStatus).filter(s => s.isActivated).length;
+            const activationPercentage = Math.round((activatedCount / 10) * 100);
+
+            // Tổng hợp Thuộc Tính
+            const totalStats = useMemo(() => {
+                const totals = {
+                    khangTatCa: 0, khangKim: 0, khangMoc: 0, khangThuy: 0, khangHoa: 0, khangTho: 0,
+                    hp: 0, mp: 0, tocDoDanh: 0, tocDoDiChuyen: 0, giamChoang: 0, giamDoc: 0, giamLamCham: 0,
+                    chiMang: 0, stNgudHanh: 0, neTranh: 0
+                };
+
+                const parseAndAdd = (statName, val) => {
+                    const name = statName.toLowerCase();
+                    if (name.includes('kháng tất cả')) totals.khangTatCa += val;
+                    else if (name.includes('băng') || name.includes('thủy')) totals.khangThuy += val;
+                    else if (name.includes('lôi') || name.includes('thổ')) totals.khangTho += val;
+                    else if (name.includes('độc') || name.includes('mộc')) totals.khangMoc += val;
+                    else if (name.includes('hỏa')) totals.khangHoa += val;
+                    else if (name.includes('kim') || name.includes('vật lý phòng')) totals.khangKim += val;
+                    else if (name.includes('sinh khí') || name.includes('sinh lực')) totals.hp += val;
+                    else if (name.includes('nội lực')) totals.mp += val;
+                    else if (name.includes('tốc độ đánh')) totals.tocDoDanh += val;
+                    else if (name.includes('tốc độ di chuyển')) totals.tocDoDiChuyen += val;
+                    else if (name.includes('choáng')) totals.giamChoang += val;
+                    else if (name.includes('trúng độc')) totals.giamDoc += val;
+                    else if (name.includes('làm chậm')) totals.giamLamCham += val;
+                    else if (name.includes('chí mạng')) totals.chiMang += val;
+                    else if (name.includes('sát thương ngũ') || name.includes('ngũ hành')) totals.stNgudHanh += val;
+                    else if (name.includes('né tránh')) totals.neTranh += val;
+                };
+
+                Object.keys(items).forEach(slotId => {
+                    const item = items[slotId];
+                    const isAct = activationStatus[slotId]?.isActivated;
+                    item.baseStats.forEach(bs => parseAndAdd(bs.stat, Number(bs.val) || 0));
+                    if (isAct) {
+                        if (item.line1) parseAndAdd(item.line1.stat, Number(item.line1.val) || 0);
+                        if (item.line2) parseAndAdd(item.line2.stat, Number(item.line2.val) || 0);
+                        if (item.line3) parseAndAdd(item.line3.stat, Number(item.line3.val) || 0);
+                    }
+                });
+
+                return totals;
+            }, [items, activationStatus]);
+
+            // Điểm Đánh Giá Sức Mạnh & EHP
+            const evaluation = useMemo(() => {
+                const avgKhang = totalStats.khangTatCa + Math.round((totalStats.khangKim + totalStats.khangMoc + totalStats.khangThuy + totalStats.khangHoa + totalStats.khangTho) / 5);
+                const ehp = Math.round(totalStats.hp * (1 + (avgKhang / 100)));
+                const score = Math.round(
+                    (totalStats.hp * 1.5) + 
+                    (avgKhang * 120) + 
+                    (totalStats.tocDoDanh * 80) + 
+                    (totalStats.tocDoDiChuyen * 50) + 
+                    (totalStats.stNgudHanh * 60) + 
+                    (activatedCount * 500)
+                );
+                return { ehp, score };
+            }, [totalStats, activatedCount]);
+
+            // Tự Động Kích Full 100% Kích Ẩn
+            const handleAutoFixCircle = () => {
+                let currentElem = selectedFaction.element;
+                const newItems = { ...items };
+
+                SLOT_CHAIN.forEach(slot => {
+                    newItems[slot.id] = {
+                        ...newItems[slot.id],
+                        element: currentElem
+                    };
+                    currentElem = ELEMENTS[currentElem].generates;
+                });
+
+                setItems(newItems);
+                showToast(`Đã tối ưu Vòng Tròn Kích Ẩn 100% cho ${selectedFaction.name}!`);
+            };
+
+            // Nạp Preset Hệ
+            const handleLoadPresetElement = (elemKey) => {
+                let currentElem = elemKey;
+                const newItems = { ...items };
+
+                SLOT_CHAIN.forEach(slot => {
+                    newItems[slot.id] = {
+                        ...newItems[slot.id],
+                        name: `${SLOT_CHAIN.find(s => s.id === slot.id).name} Hoàng Kim (${ELEMENTS[currentElem].name})`,
+                        element: currentElem
+                    };
+                    currentElem = ELEMENTS[currentElem].generates;
+                });
+
+                setItems(newItems);
+                showToast(`Đã nạp Preset Ngũ Hành ${ELEMENTS[elemKey].name}!`);
+            };
+
+            // Xử lý Upload Ảnh & Gọi Gemini 3 Flash API
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setUploadedImage(reader.result);
+                        analyzeImageWithGemini(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            // Gọi API Soi Đồ AI Gemini 3 Flash
+            const analyzeImageWithGemini = async (imageDataUrl) => {
+                setIsAnalyzing(true);
+                setAiAnalysisResult('');
+
+                try {
+                    const apiKey = ""; // Canvas runtime dynamic injection
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                    
+                    const base64Data = imageDataUrl.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
+
+                    const systemPrompt = `Bạn là một Chuyên Gia Game Thủ Võ Lâm Truyền Kỳ / Tân Võ Lâm Gigantic am hiểu sâu sắc về hệ thống trang bị, kích ẩn Ngũ Hành, tẩy dòng và cường hóa. 
+Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phân tích chi tiết bằng Tiếng Việt với cấu trúc chuẩn:
+1. 🛡️ **Thông Tin Cơ Bản**: Tên trang bị, Hệ Ngũ Hành (Kim/Mộc/Thủy/Hỏa/Thổ), Phẩm cấp.
+2. ⚡ **Đánh Giá Dòng Thuộc Tính**:
+   - Dòng Trắng (Cơ bản): [Nhận xét ngon hay cùi]
+   - 3 Dòng Ẩn: [Phân tích từng dòng, dòng nào VIP, dòng nào là Dòng Rác cần tẩy]
+3. 🔨 **Hướng Dẫn Cường Hóa & Nâng Cấp**:
+   - Thứ tự ưu tiên lên các mốc (+8, +12, +16).
+   - Loại đá / thuộc tính nên khảm hoặc tẩy lại.
+4. 🐉 **Môn Phái Phù Hợp Nhất**: Đề xuất môn phái tận dụng 100% sức mạnh của món đồ này (Thiếu Lâm, Võ Đang, Ngũ Độc...).
+5. 🏆 **Điểm Số Trang Bị**: Đánh giá trên thang điểm 100.`;
+
+                    const payload = {
+                        contents: [
+                            {
+                                role: "user",
+                                parts: [
+                                    { text: `Hãy soi và phân tích món trang bị này cho môn phái ${selectedFaction.name} (${selectedFaction.element.toUpperCase()}).` },
+                                    {
+                                        inlineData: {
+                                            mimeType: "image/png",
+                                            data: base64Data
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (text) {
+                        setAiAnalysisResult(text);
+                        showToast("Đã phân tích trang bị thành công!");
+                    } else {
+                        throw new Error("Không nhận được phản hồi từ AI");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    setAiAnalysisResult(`### ⚠️ Phân Tích Demo Mẫu Trang Bị (Offline Mode)
+**1. Thông Tin**: Đao Hoàng Kim Sát Thương - Hệ Kim
+**2. Đánh Giá Dòng**:
+- *Dòng 1*: +85 Sát thương Ngũ Hành (Rất VIP)
+- *Dòng 2*: +30% Tốc độ đánh (Tối quan trọng cho Thiên Vương / Thiếu Lâm)
+- *Dòng 3*: +5% Hút Sinh Lực (Dòng Phụ Trợ Tốt)
+**3. Cường Hóa**: Ưu tiên lên +12 để kích mốc Tốc Đánh.
+**4. Môn Phái**: Thiếu Lâm, Thiên Vương.
+**5. Điểm Số**: 92 / 100.`);
+                    showToast("Đã xuất bản phân tích mẫu!");
+                } finally {
+                    setIsAnalyzing(false);
+                }
+            };
+
+            return (
+                <div className="max-w-7xl mx-auto px-4 py-6">
+                    {/* Toast Notification */}
+                    {toastMessage && (
+                        <div className="fixed top-5 right-5 z-50 bg-gold text-slate-950 font-black px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-yellow-300">
+                            <i className="fa-solid fa-circle-check text-xl"></i>
+                            <span>{toastMessage}</span>
+                        </div>
+                    )}
+
+                    {/* Header Banner */}
+                    <header className="bg-panelbg border border-slate-800 rounded-3xl p-6 mb-6 shadow-2xl relative overflow-hidden">
+                        <div className="absolute -right-12 -bottom-12 opacity-10 text-9xl text-gold pointer-events-none font-title">
+                            武林
+                        </div>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+                            <div>
+                                <div className="flex items-center gap-2.5 mb-1.5">
+                                    <span className="bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-950 text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider shadow">
+                                        V3.0 Ultimate Pro
+                                    </span>
+                                    <span className="text-xs text-slate-400 font-medium">Tích Hợp AI Soi Đồ & Full Ngũ Hành JX1</span>
+                                </div>
+                                <h1 className="text-2xl md:text-3xl font-black text-amber-400 tracking-tight flex items-center gap-3">
+                                    <span>CÔNG CỤ PHÂN TÍCH PHỐI ĐỒ & SOI ĐỒ AI</span>
+                                </h1>
+                                <p className="text-slate-400 text-xs md:text-sm mt-1">
+                                    Tính toán Kích Ẩn 10 món trang bị, mô phỏng EHP & Tải ảnh soi đồ với Gemini 3 Flash.
+                                </p>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-3">
+                                <button 
+                                    onClick={handleAutoFixCircle}
+                                    className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 text-xs border border-emerald-400/30">
+                                    <i className="fa-solid fa-wand-magic-sparkles"></i>
+                                    <span>Tự Động Kích Full 10 Món</span>
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        const code = btoa(JSON.stringify({ faction: selectedFaction.id, items }));
+                                        setShareCode(code);
+                                        setShowShareModal(true);
+                                    }}
+                                    className="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center gap-2 text-xs">
+                                    <i className="fa-solid fa-share-nodes"></i>
+                                    <span>Chia Sẻ Build</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Navigation Tabs */}
+                        <div className="mt-6 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={() => setActiveTab('sim')}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                        activeTab === 'sim' ? 'bg-amber-500 text-slate-950 border-yellow-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                                    }`}>
+                                    <i className="fa-solid fa-shield"></i>
+                                    <span>Phân Tích 10 Món Đồ</span>
+                                </button>
+
+                                <button 
+                                    onClick={() => setActiveTab('ai_scan')}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                        activeTab === 'ai_scan' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-cyan-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                                    }`}>
+                                    <i className="fa-solid fa-robot"></i>
+                                    <span>Soi Đồ AI (Upload Ảnh)</span>
+                                </button>
+
+                                <button 
+                                    onClick={() => setActiveTab('forge')}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                        activeTab === 'forge' ? 'bg-amber-500 text-slate-950 border-yellow-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                                    }`}>
+                                    <i className="fa-solid fa-hammer"></i>
+                                    <span>Chi Phí Cường Hóa (+16)</span>
+                                </button>
+
+                                <button 
+                                    onClick={() => setActiveTab('factions')}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
+                                        activeTab === 'factions' ? 'bg-amber-500 text-slate-950 border-yellow-300 shadow-lg' : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white'
+                                    }`}>
+                                    <i className="fa-solid fa-scroll"></i>
+                                    <span>Bí Kíp 10 Môn Phái</span>
+                                </button>
+                            </div>
+
+                            {/* Môn Phái Selection */}
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold text-slate-400">Hệ Phái:</span>
+                                <select 
+                                    value={selectedFaction.id}
+                                    onChange={(e) => setSelectedFaction(FACTIONS.find(f => f.id === e.target.value))}
+                                    className="bg-slate-950 text-amber-400 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-amber-500">
+                                    {FACTIONS.map(f => (
+                                        <option key={f.id} value={f.id}>{f.name} ({ELEMENTS[f.element].name})</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* TAB 1: PHÂN TÍCH 10 MÓN ĐỒ */}
+                    {activeTab === 'sim' && (
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                            {/* Cột Trái & Giữa: Danh Sách Trang Bị (8 Cols) */}
+                            <div className="lg:col-span-8 space-y-6">
+                                {/* Status Summary Card */}
+                                <div className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black border ${
+                                            activationPercentage === 100 
+                                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500 glow-moc' 
+                                                : 'bg-amber-500/20 text-amber-400 border-amber-500'
+                                        }`}>
+                                            {activationPercentage}%
+                                        </div>
+                                        <div>
+                                            <div className="text-[11px] text-slate-400 font-bold uppercase">Tỷ Lệ Kích Ẩn</div>
+                                            <div className="text-base font-black text-white">{activatedCount} / 10 Món Đồ</div>
+                                            <div className="text-[11px] text-emerald-400">{activationPercentage === 100 ? 'Full 30 Dòng Ẩn Active' : 'Chưa kích trọn vẹn'}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border-t md:border-t-0 md:border-l border-slate-800 pt-3 md:pt-0 md:pl-4">
+                                        <div className="text-[11px] text-slate-400 font-bold uppercase">Sinh Thái Thực (EHP)</div>
+                                        <div className="text-lg font-black text-amber-400">{evaluation.ehp.toLocaleString()} BP</div>
+                                        <div className="text-[11px] text-slate-400">Độ trâu mô phỏng chiến đấu</div>
+                                    </div>
+
+                                    <div className="border-t md:border-t-0 md:border-l border-slate-800 pt-3 md:pt-0 md:pl-4">
+                                        <div className="text-[11px] text-slate-400 font-bold uppercase">Điểm Chiến Lực (Power)</div>
+                                        <div className="text-lg font-black text-cyan-400">{evaluation.score.toLocaleString()} ĐS</div>
+                                        <div className="text-[11px] text-slate-400">Đánh giá tổng quan build</div>
+                                    </div>
+                                </div>
+
+                                {/* 10 Trang Bị Grid */}
+                                <div className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl">
+                                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                                        <h2 className="text-xs font-bold text-amber-400 flex items-center gap-2 uppercase tracking-wider">
+                                            <i className="fa-solid fa-boxes-packing"></i>
+                                            <span>TRANG BỊ VÀ CHUỖI TƯƠNG SINH 10 MÓN</span>
+                                        </h2>
+                                        <span className="text-xs text-slate-400">Nhấp vào món đồ để chỉnh sửa</span>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {SLOT_CHAIN.map((slot) => {
+                                            const item = items[slot.id];
+                                            const elem = ELEMENTS[item.element];
+                                            const actStatus = activationStatus[slot.id];
+                                            const activatorSlot = SLOT_CHAIN.find(s => s.id === actStatus.activatedBySlot);
+                                            const activatorItem = items[activatorSlot.id];
+                                            const activatorElem = ELEMENTS[activatorItem.element];
+
+                                            return (
+                                                <div 
+                                                    key={slot.id}
+                                                    onClick={() => setEditingSlot(slot.id)}
+                                                    className={`cursor-pointer rounded-xl p-4 transition-all border relative group hover:border-amber-500/60 ${
+                                                        actStatus.isActivated 
+                                                            ? 'bg-cardbg/90 border-slate-700/80' 
+                                                            : 'bg-red-950/20 border-red-900/40'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <div className="flex items-center gap-2.5">
+                                                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm border ${elem.bg} ${elem.class} ${elem.glow}`}>
+                                                                <i className={`fa-solid ${slot.icon}`}></i>
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
+                                                                    <span>{slot.name}</span>
+                                                                    <span className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded border ${elem.bg} ${elem.class}`}>
+                                                                        Hệ {elem.name}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="text-xs font-bold text-white group-hover:text-amber-300 transition">
+                                                                    {item.name}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div>
+                                                            {actStatus.isActivated ? (
+                                                                <span className="text-[10px] font-extrabold text-emerald-400 bg-emerald-950/60 border border-emerald-500/40 px-2 py-0.5 rounded flex items-center gap-1">
+                                                                    <i className="fa-solid fa-check"></i> KÍCH ẨN
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-[10px] font-extrabold text-red-400 bg-red-950/80 border border-red-500/40 px-2 py-0.5 rounded flex items-center gap-1">
+                                                                    <i className="fa-solid fa-xmark"></i> CHƯA KÍCH
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="text-[10px] bg-slate-950/70 rounded-lg p-2 mb-2 border border-slate-800 flex items-center justify-between">
+                                                        <span className="text-slate-400">
+                                                            Kích bởi: <strong className="text-slate-200">{activatorSlot.name}</strong> ({activatorElem.name})
+                                                        </span>
+                                                        <span className={actStatus.isActivated ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>
+                                                            {activatorElem.name} sinh {elem.name} {actStatus.isActivated ? "✓" : "✗"}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="space-y-1 text-xs">
+                                                        {item.baseStats.map((bs, i) => (
+                                                            <div key={i} className="text-slate-300 flex justify-between text-[11px]">
+                                                                <span>• {bs.stat}:</span>
+                                                                <span className="font-semibold text-slate-100">+{bs.val} {bs.unit}</span>
+                                                            </div>
+                                                        ))}
+
+                                                        <div className="pt-1 border-t border-slate-800/80 space-y-1">
+                                                            {[item.line1, item.line2, item.line3].map((line, lIdx) => line && (
+                                                                <div 
+                                                                    key={lIdx} 
+                                                                    className={`flex justify-between text-[11px] ${
+                                                                        actStatus.isActivated 
+                                                                            ? 'text-amber-300 font-medium' 
+                                                                            : 'text-slate-600 line-through'
+                                                                    }`}
+                                                                >
+                                                                    <span>[Ẩn {lIdx+1}] {line.stat}:</span>
+                                                                    <span>+{line.val} {line.unit}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Cột Phải: Bảng Thống Kê Tổng Thuộc Tính (4 Cols) */}
+                            <div className="lg:col-span-4 space-y-6">
+                                {/* Kháng Ngũ Hành */}
+                                <div className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl">
+                                    <h2 className="text-xs font-bold text-amber-400 flex items-center gap-2 mb-4 pb-2 border-b border-slate-800 uppercase tracking-wider">
+                                        <i className="fa-solid fa-shield-halved"></i>
+                                        <span>TỔNG KHÁNG TÍCH LŨY</span>
+                                    </h2>
+
+                                    <div className="space-y-2.5">
+                                        <div className="bg-slate-900 p-3 rounded-xl border border-amber-500/30 flex items-center justify-between">
+                                            <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
+                                                <i className="fa-solid fa-star"></i>
+                                                <span>Kháng Tất Cả</span>
+                                            </div>
+                                            <span className="text-base font-black text-amber-300">+{totalStats.khangTatCa}%</span>
+                                        </div>
+
+                                        <div className="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
+                                            <span className="text-kim font-bold flex items-center gap-1.5">
+                                                <i className="fa-solid fa-coins"></i> Kháng Vật Lý (Kim):
+                                            </span>
+                                            <span className="font-bold text-white">+{totalStats.khangKim + totalStats.khangTatCa}%</span>
+                                        </div>
+
+                                        <div className="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
+                                            <span className="text-moc font-bold flex items-center gap-1.5">
+                                                <i className="fa-solid fa-tree"></i> Kháng Độc Tố (Mộc):
+                                            </span>
+                                            <span className="font-bold text-white">+{totalStats.khangMoc + totalStats.khangTatCa}%</span>
+                                        </div>
+
+                                        <div className="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
+                                            <span className="text-thuy font-bold flex items-center gap-1.5">
+                                                <i className="fa-solid fa-droplet"></i> Kháng Băng (Thủy):
+                                            </span>
+                                            <span className="font-bold text-white">+{totalStats.khangThuy + totalStats.khangTatCa}%</span>
+                                        </div>
+
+                                        <div className="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
+                                            <span className="text-hoa font-bold flex items-center gap-1.5">
+                                                <i className="fa-solid fa-fire"></i> Kháng Hỏa (Hỏa):
+                                            </span>
+                                            <span className="font-bold text-white">+{totalStats.khangHoa + totalStats.khangTatCa}%</span>
+                                        </div>
+
+                                        <div className="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
+                                            <span className="text-tho font-bold flex items-center gap-1.5">
+                                                <i className="fa-solid fa-mountain"></i> Kháng Lôi (Thổ):
+                                            </span>
+                                            <span className="font-bold text-white">+{totalStats.khangTho + totalStats.khangTatCa}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Sinh Tồn & Tốc Độ */}
+                                <div className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                                    <h2 className="text-xs font-bold text-amber-400 flex items-center gap-2 pb-2 border-b border-slate-800 uppercase tracking-wider">
+                                        <i className="fa-solid fa-heart-pulse"></i>
+                                        <span>CHỈ SỐ CHIẾN ĐẤU</span>
+                                    </h2>
+
+                                    <div className="grid grid-cols-2 gap-2.5 text-xs">
+                                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                                            <div className="text-slate-400 text-[10px]">Sinh Khí (HP)</div>
+                                            <div className="text-sm font-extrabold text-red-400">+{totalStats.hp}</div>
+                                        </div>
+
+                                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                                            <div className="text-slate-400 text-[10px]">Nội Lực (MP)</div>
+                                            <div className="text-sm font-extrabold text-cyan-400">+{totalStats.mp}</div>
+                                        </div>
+
+                                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                                            <div className="text-slate-400 text-[10px]">Tốc Độ Đánh</div>
+                                            <div className="text-sm font-extrabold text-amber-400">+{totalStats.tocDoDanh}%</div>
+                                        </div>
+
+                                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                                            <div className="text-slate-400 text-[10px]">Tốc Độ Di Chuyển</div>
+                                            <div className="text-sm font-extrabold text-emerald-400">+{totalStats.tocDoDiChuyen}%</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2 text-xs">
+                                        <div className="flex justify-between p-2 rounded bg-slate-900/50 border border-slate-800">
+                                            <span className="text-slate-400">Giảm choáng:</span>
+                                            <span className="font-bold text-amber-400">+{totalStats.giamChoang} đ</span>
+                                        </div>
+                                        <div className="flex justify-between p-2 rounded bg-slate-900/50 border border-slate-800">
+                                            <span className="text-slate-400">Giảm độc tố:</span>
+                                            <span className="font-bold text-emerald-400">+{totalStats.giamDoc} đ</span>
+                                        </div>
+                                        <div className="flex justify-between p-2 rounded bg-slate-900/50 border border-slate-800">
+                                            <span className="text-slate-400">Giảm làm chậm:</span>
+                                            <span className="font-bold text-cyan-400">+{totalStats.giamLamCham} đ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 2: SOI ĐỒ AI (UPLOAD ÁNH) */}
+                    {activeTab === 'ai_scan' && (
+                        <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-4xl mx-auto space-y-6">
+                            <div className="text-center max-w-xl mx-auto">
+                                <h2 className="text-xl font-black text-amber-400 uppercase tracking-tight flex items-center justify-center gap-2">
+                                    <i className="fa-solid fa-robot text-cyan-400"></i>
+                                    <span>TRỢ LÝ GAME THỦ SOI ĐỒ AI</span>
+                                </h2>
+                                <p className="text-xs text-slate-400 mt-1">
+                                    Tải ảnh chụp màn hình món đồ trong game lên. Gemini 3 Flash AI sẽ soi dòng, đánh giá Dòng VIP / Dòng Rác và chỉ bạn cách nâng cấp!
+                                </p>
+                            </div>
+
+                            {/* Dropzone Upload */}
+                            <div 
+                                onClick={() => fileInputRef.current?.click()}
+                                className="border-2 border-dashed border-slate-700 hover:border-amber-500/80 rounded-2xl p-8 text-center cursor-pointer bg-slate-950/60 hover:bg-slate-950/90 transition group">
+                                <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    ref={fileInputRef} 
+                                    onChange={handleImageUpload} 
+                                    className="hidden" 
+                                />
+
+                                {uploadedImage ? (
+                                    <div className="flex flex-col items-center gap-3">
+                                        <img src={uploadedImage} alt="Trang Bị Scan" className="max-h-60 rounded-xl border border-slate-700 shadow-xl" />
+                                        <span className="text-xs text-emerald-400 font-bold">Nhấp vào đây để đổi ảnh khác</span>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        <div className="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-amber-400 text-2xl mx-auto group-hover:scale-110 transition">
+                                            <i className="fa-solid fa-cloud-arrow-up"></i>
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-bold text-white">Tải Ảnh Trang Bị Lên (PNG, JPG, WEBP)</div>
+                                            <div className="text-xs text-slate-500 mt-1">Hoặc nhấp vào để chọn ảnh từ thư viện của bạn</div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* State Loading */}
+                            {isAnalyzing && (
+                                <div className="bg-slate-900/80 border border-cyan-500/40 p-6 rounded-2xl text-center space-y-3">
+                                    <i className="fa-solid fa-spinner fa-spin text-3xl text-cyan-400"></i>
+                                    <div className="text-xs font-bold text-cyan-300">Đang quét ảnh & soi dòng thuộc tính trang bị bằng AI...</div>
+                                </div>
+                            )}
+
+                            {/* Output Result */}
+                            {aiAnalysisResult && (
+                                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
+                                    <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                                        <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                                            <i className="fa-solid fa-scroll"></i>
+                                            <span>KẾT QUẢ SOI ĐỒ CHI TIẾT TỪ AI</span>
+                                        </h3>
+                                        <span className="text-[10px] font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded">
+                                            Gemini 3 Flash Powered
+                                        </span>
+                                    </div>
+
+                                    <div className="text-xs text-slate-200 leading-relaxed font-sans whitespace-pre-line bg-slate-900/50 p-4 rounded-xl border border-slate-800/80">
+                                        {aiAnalysisResult}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* TAB 3: CHI PHÍ CƯỜNG HÓA */}
+                    {activeTab === 'forge' && (
+                        <div className="bg-panelbg border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-4xl mx-auto space-y-6">
+                            <div className="text-center max-w-xl mx-auto">
+                                <h2 className="text-xl font-black text-amber-400 uppercase tracking-tight flex items-center justify-center gap-2">
+                                    <i className="fa-solid fa-hammer"></i>
+                                    <span>BẢNG CHI PHÍ CƯỜNG HÓA TỪ +1 ĐẾN +16</span>
+                                </h2>
+                                <p className="text-xs text-slate-400 mt-1">
+                                    Tính toán số đá cường hóa, tỷ lệ thành công và lượng Vàng/Bạc cần chuẩn bị để đập đồ không lo xịt!
+                                </p>
+                            </div>
+
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr className="bg-slate-900 text-amber-400 border-b border-slate-800 font-bold uppercase">
+                                            <th className="p-3">Mốc Cường Hóa</th>
+                                            <th className="p-3">Huyền Tinh / Đá Cần</th>
+                                            <th className="p-3">Tỷ Lệ Thành Công</th>
+                                            <th className="p-3">Bạc Khóa Cần</th>
+                                            <th className="p-3">Thuộc Tính Thêm</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                                        {[
+                                            { lvl: '+1 ➔ +4', stone: 'Huyền Tinh Cấp 1-3', rate: '100%', silver: '5,000 Bạc', bonus: '+10% Chỉ số cơ bản' },
+                                            { lvl: '+5 ➔ +8', stone: 'Huyền Tinh Cấp 4-5', rate: '85% - 70%', silver: '25,000 Bạc', bonus: '+25% CS + Kích thuộc tính Mốc 1' },
+                                            { lvl: '+9 ➔ +12', stone: 'Huyền Tinh Cấp 6-7', rate: '60% - 45%', silver: '100,000 Bạc', bonus: '+50% CS + Kích thuộc tính Mốc 2' },
+                                            { lvl: '+13 ➔ +14', stone: 'Huyền Tinh Cấp 8', rate: '35%', silver: '500,000 Bạc', bonus: '+75% CS + Glow Hào Quang Phẩm Kim' },
+                                            { lvl: '+15 ➔ +16', stone: 'Huyền Tinh Cấp 9-10', rate: '20%', silver: '2,000,000 Bạc', bonus: '+100% CS + Vòng Hào Quang Hoàng Kim Supreme' }
+                                        ].map((row, idx) => (
+                                            <tr key={idx} className="hover:bg-slate-900/40">
+                                                <td className="p-3 font-extrabold text-amber-300">{row.lvl}</td>
+                                                <td className="p-3">{row.stone}</td>
+                                                <td className="p-3 font-bold text-emerald-400">{row.rate}</td>
+                                                <td className="p-3">{row.silver}</td>
+                                                <td className="p-3 text-cyan-300">{row.bonus}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 4: BÍ KÍP 10 MÔN PHÁI */}
+                    {activeTab === 'factions' && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
+                            {FACTIONS.map(f => {
+                                const el = ELEMENTS[f.element];
+                                return (
+                                    <div key={f.id} className="bg-panelbg border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                                        <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                                            <div className="flex items-center gap-2.5">
+                                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm border ${el.bg} ${el.class} ${el.glow}`}>
+                                                    <i className={`fa-solid ${f.icon}`}></i>
+                                                </div>
+                                                <div>
+                                                    <div className="text-sm font-black text-white">{f.name}</div>
+                                                    <div className="text-[10px] text-slate-400">{f.type} • Hệ {el.name}</div>
+                                                </div>
+                                            </div>
+                                            <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded border ${el.bg} ${el.class}`}>
+                                                {el.name}
+                                            </span>
+                                        </div>
+
+                                        <p className="text-xs text-slate-300">{f.desc}</p>
+
+                                        <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-xs">
+                                            <span className="text-amber-400 font-bold block mb-1">Thuộc Tính Dòng Đồ Ưu Tiên:</span>
+                                            <span className="text-slate-300">{f.prio}</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+
+                    {/* Modal Chỉnh Sửa Trang Bị */}
+                    {editingSlot && (
+                        <ModalEditItem 
+                            slot={SLOT_CHAIN.find(s => s.id === editingSlot)}
+                            item={items[editingSlot]}
+                            onClose={() => setEditingSlot(null)}
+                            onSave={(updated) => {
+                                setItems(prev => ({ ...prev, [editingSlot]: updated }));
+                                setEditingSlot(null);
+                                showToast("Đã lưu cập nhật món đồ!");
+                            }}
+                        />
+                    )}
+
+                    {/* Modal Chia Sẻ Build */}
+                    {showShareModal && (
+                        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                            <div className="bg-panelbg border border-slate-700 rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+                                <h3 className="text-base font-bold text-amber-400 mb-2">Mã Cấu Hình Build (JSON Base64)</h3>
+                                <textarea 
+                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-amber-300 font-mono h-32 focus:outline-none focus:border-amber-500 mb-4"
+                                    value={shareCode}
+                                    onChange={(e) => setShareCode(e.target.value)}
+                                ></textarea>
+                                <div className="flex justify-between">
+                                    <button 
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(shareCode);
+                                            showToast("Đã chép mã build!");
+                                        }}
+                                        className="bg-slate-800 text-amber-400 font-bold px-4 py-2 rounded-xl text-xs">
+                                        Copy Mã
+                                    </button>
+                                    <div className="flex gap-2">
+                                        <button 
+                                            onClick={() => {
+                                                try {
+                                                    const dec = JSON.parse(atob(shareCode));
+                                                    if(dec.items) setItems(dec.items);
+                                                    setShowShareModal(false);
+                                                    showToast("Tải build thành công!");
+                                                } catch(e) { showToast("Mã không hợp lệ!"); }
+                                            }}
+                                            className="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs">
+                                            Nạp Build
+                                        </button>
+                                        <button onClick={() => setShowShareModal(false)} className="bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs">Đóng</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Modal Component Edit Item
+        function ModalEditItem({ slot, item, onClose, onSave }) {
+            const [formData, setFormData] = useState({ ...item });
+
+            const handleBaseChange = (idx, field, value) => {
+                const newBase = [...formData.baseStats];
+                newBase[idx][field] = value;
+                setFormData({ ...formData, baseStats: newBase });
+            };
+
+            const handleLineChange = (lineKey, field, value) => {
+                setFormData({
+                    ...formData,
+                    [lineKey]: { ...formData[lineKey], [field]: value }
+                });
+            };
+
+            return (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+                    <div className="bg-panelbg border border-slate-700 rounded-2xl p-6 max-w-lg w-full shadow-2xl my-8">
+                        <div className="flex justify-between items-center pb-3 mb-4 border-b border-slate-800">
+                            <h3 className="text-base font-bold text-amber-400 flex items-center gap-2">
+                                <i className={`fa-solid ${slot.icon}`}></i>
+                                <span>Sửa Món: {slot.name}</span>
+                            </h3>
+                            <button onClick={onClose} className="text-slate-400 text-lg"><i className="fa-solid fa-xmark"></i></button>
+                        </div>
+
+                        <div className="space-y-4 text-xs">
+                            <div>
+                                <label className="block text-slate-400 mb-1 font-bold">Tên Món Đồ:</label>
+                                <input 
+                                    type="text" 
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-semibold"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-slate-400 mb-1 font-bold">Hệ Ngũ Hành:</label>
+                                <div className="grid grid-cols-5 gap-1.5">
+                                    {Object.keys(ELEMENTS).map(eKey => {
+                                        const el = ELEMENTS[eKey];
+                                        const isSel = formData.element === eKey;
+                                        return (
+                                            <button
+                                                key={eKey}
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, element: eKey })}
+                                                className={`py-1.5 rounded font-bold transition flex items-center justify-center gap-1 border ${
+                                                    isSel ? `${el.bg} ${el.class} border-current ring-1 ring-amber-400` : 'bg-slate-950 text-slate-400 border-slate-800'
+                                                }`}
+                                            >
+                                                <span>{el.name}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <div className="pt-2 border-t border-slate-800">
+                                <label className="block text-slate-400 mb-2 font-bold">Dòng Hiện (Cơ Bản):</label>
+                                {formData.baseStats.map((bs, idx) => (
+                                    <div key={idx} className="flex gap-2 mb-2">
+                                        <input 
+                                            type="text" value={bs.stat} onChange={(e) => handleBaseChange(idx, 'stat', e.target.value)}
+                                            className="flex-1 bg-slate-950 border border-slate-800 rounded p-2 text-slate-200"
+                                        />
+                                        <input 
+                                            type="number" value={bs.val} onChange={(e) => handleBaseChange(idx, 'val', Number(e.target.value))}
+                                            className="w-20 bg-slate-950 border border-slate-800 rounded p-2 text-slate-200"
+                                        />
+                                        <input 
+                                            type="text" value={bs.unit} onChange={(e) => handleBaseChange(idx, 'unit', e.target.value)}
+                                            className="w-16 bg-slate-950 border border-slate-800 rounded p-2 text-slate-200"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="pt-2 border-t border-slate-800">
+                                <label className="block text-amber-400 mb-2 font-bold">3 Dòng Ẩn Ngũ Hành:</label>
+                                {['line1', 'line2', 'line3'].map((lineKey, lIdx) => (
+                                    <div key={lineKey} className="flex gap-2 mb-2 items-center">
+                                        <span className="text-slate-500 font-bold w-12">Ẩn {lIdx+1}:</span>
+                                        <input 
+                                            type="text" value={formData[lineKey]?.stat || ''} onChange={(e) => handleLineChange(lineKey, 'stat', e.target.value)}
+                                            className="flex-1 bg-slate-950 border border-slate-800 rounded p-2 text-amber-300"
+                                        />
+                                        <input 
+                                            type="number" value={formData[lineKey]?.val || 0} onChange={(e) => handleLineChange(lineKey, 'val', Number(e.target.value))}
+                                            className="w-20 bg-slate-950 border border-slate-800 rounded p-2 text-amber-300"
+                                        />
+                                        <input 
+                                            type="text" value={formData[lineKey]?.unit || ''} onChange={(e) => handleLineChange(lineKey, 'unit', e.target.value)}
+                                            className="w-16 bg-slate-950 border border-slate-800 rounded p-2 text-amber-300"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-2 mt-5 pt-3 border-t border-slate-800">
+                            <button onClick={onClose} className="bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs">Hủy</button>
+                            <button onClick={() => onSave(formData)} className="bg-amber-500 text-slate-950 font-black px-5 py-2 rounded-xl text-xs">Lưu Món Đồ</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
