@@ -215,6 +215,152 @@
                 setTimeout(() => setToastMessage(''), 3000);
             };
 
+            // Tự Động Cập Nhật Set Đồ, Vòng Kích Ẩn & Thuộc Tính Theo Môn Phái
+            const handleFactionSelect = (faction) => {
+                setSelectedFaction(faction);
+
+                let currentElem = faction.element;
+                const newItems = {};
+
+                const elementStatConfigs = {
+                    kim: {
+                        weaponName: `Thái Hư Đao / Thương - ${faction.name}`,
+                        dmgType: 'Sát thương Vật Lý',
+                        elemDmg: 'Vật Lý Ngũ Hành (Kim)',
+                        special: { stat: 'Phản Sát Thương', val: 12, unit: '%' }
+                    },
+                    moc: {
+                        weaponName: `Bão Vũ Nỏ / Đao - ${faction.name}`,
+                        dmgType: 'Sát thương Độc Tố',
+                        elemDmg: 'Độc Sát Ngũ Hành (Mộc)',
+                        special: { stat: 'Giảm thời gian trúng độc', val: 40, unit: 'đ' }
+                    },
+                    thuy: {
+                        weaponName: `Trầm Hương Kiếm / Đao - ${faction.name}`,
+                        dmgType: 'Băng Sát Nội Công',
+                        elemDmg: 'Băng Sát Ngũ Hành (Thủy)',
+                        special: { stat: 'Tỷ lệ làm chậm', val: 35, unit: '%' }
+                    },
+                    hoa: {
+                        weaponName: `Đồng Lôi Chưởng / Bổng - ${faction.name}`,
+                        dmgType: 'Hỏa Sát Ngoại Công',
+                        elemDmg: 'Hỏa Sát Ngũ Hành (Hỏa)',
+                        special: { stat: 'Né tránh', val: 220, unit: 'đ' }
+                    },
+                    tho: {
+                        weaponName: `Sương Phong Kiếm / Đao - ${faction.name}`,
+                        dmgType: 'Lôi Sát Nội Công',
+                        elemDmg: 'Lôi Sát Ngũ Hành (Thổ)',
+                        special: { stat: 'Tỷ lệ choáng', val: 20, unit: '%' }
+                    }
+                };
+
+                SLOT_CHAIN.forEach((slot) => {
+                    const config = elementStatConfigs[currentElem] || elementStatConfigs.kim;
+                    const elemObj = ELEMENTS[currentElem];
+
+                    if (slot.id === 'weapon') {
+                        newItems[slot.id] = {
+                            name: config.weaponName,
+                            element: currentElem,
+                            baseStats: [
+                                { stat: config.dmgType, val: 145, unit: '%' },
+                                { stat: 'Tốc độ đánh', val: 30, unit: '%' }
+                            ],
+                            line1: { stat: config.elemDmg, val: 100, unit: 'đ' },
+                            line2: { stat: 'Tỷ lệ chí mạng', val: 15, unit: '%' },
+                            line3: { stat: 'Hút Sinh Lực', val: 7, unit: '%' }
+                        };
+                    } else if (slot.id === 'armor') {
+                        newItems[slot.id] = {
+                            name: `Áo Lam Ngữ Hoàng Kim (${elemObj.name})`,
+                            element: currentElem,
+                            baseStats: [{ stat: 'Sinh khí', val: 180, unit: 'đ' }],
+                            line1: { stat: 'Kháng Tất Cả', val: 28, unit: '%' },
+                            line2: { stat: 'Giảm thời gian choáng', val: 40, unit: 'đ' },
+                            line3: config.special
+                        };
+                    } else if (slot.id === 'head') {
+                        newItems[slot.id] = {
+                            name: `Mão Tử Mãng (${elemObj.name})`,
+                            element: currentElem,
+                            baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }],
+                            line1: { stat: `Kháng Lôi (Thổ)`, val: 35, unit: '%' },
+                            line2: { stat: 'Né tránh', val: 180, unit: 'đ' },
+                            line3: { stat: 'Phục hồi HP', val: 20, unit: 'đ' }
+                        };
+                    } else if (slot.id === 'necklace') {
+                        newItems[slot.id] = {
+                            name: `Dây Chuyền Hoàng Kim (${elemObj.name})`,
+                            element: currentElem,
+                            baseStats: [{ stat: 'Kháng Hỏa', val: 22, unit: '%' }],
+                            line1: { stat: 'Kháng Tất Cả', val: 25, unit: '%' },
+                            line2: { stat: 'Tỷ lệ chí mạng', val: 12, unit: '%' },
+                            line3: { stat: 'Sinh lực tối đa', val: 260, unit: 'đ' }
+                        };
+                    } else if (slot.id === 'ring1') {
+                        newItems[slot.id] = {
+                            name: `Nhẫn Trên (${elemObj.name})`,
+                            element: currentElem,
+                            baseStats: [{ stat: 'Nội lực', val: 160, unit: 'đ' }],
+                            line1: { stat: 'Kháng Độc (Mộc)', val: 32, unit: '%' },
+                            line2: { stat: 'Tốc độ di chuyển', val: 15, unit: '%' },
+                            line3: { stat: 'Sức mạnh', val: 35, unit: 'đ' }
+                        };
+                    } else if (slot.id === 'ring2') {
+                        newItems[slot.id] = {
+                            name: `Nhẫn Dưới (${elemObj.name})`,
+                            element: currentElem,
+                            baseStats: [{ stat: 'Sinh lực', val: 160, unit: 'đ' }],
+                            line1: { stat: 'Kháng Băng (Thủy)', val: 32, unit: '%' },
+                            line2: { stat: 'Tốc độ đánh', val: 15, unit: '%' },
+                            line3: { stat: 'Thân pháp', val: 35, unit: 'đ' }
+                        };
+                    } else if (slot.id === 'pendant') {
+                        newItems[slot.id] = {
+                            name: `Ngọc Bội (${elemObj.name})`,
+                            element: currentElem,
+                            baseStats: [{ stat: 'Kháng Thủy', val: 22, unit: '%' }],
+                            line1: { stat: 'Kháng Tất Cả', val: 22, unit: '%' },
+                            line2: { stat: 'Thời gian trúng độc', val: -35, unit: '%' },
+                            line3: { stat: 'Phục hồi MP', val: 25, unit: 'đ' }
+                        };
+                    } else if (slot.id === 'gloves') {
+                        newItems[slot.id] = {
+                            name: `Bao Tay Hoàng Kim (${elemObj.name})`,
+                            element: currentElem,
+                            baseStats: [{ stat: 'Phòng thủ vật lý', val: 110, unit: 'đ' }],
+                            line1: { stat: 'Tốc độ đánh', val: 18, unit: '%' },
+                            line2: { stat: 'Kháng Hỏa', val: 32, unit: '%' },
+                            line3: { stat: 'Né tránh', val: 210, unit: 'đ' }
+                        };
+                    } else if (slot.id === 'belt') {
+                        newItems[slot.id] = {
+                            name: `Đai Lưng Hoàng Kim (${elemObj.name})`,
+                            element: currentElem,
+                            baseStats: [{ stat: 'Sinh khí', val: 140, unit: 'đ' }],
+                            line1: { stat: 'Kháng Băng (Thủy)', val: 32, unit: '%' },
+                            line2: { stat: 'Giảm làm chậm', val: 40, unit: 'đ' },
+                            line3: { stat: 'Thể lực', val: 70, unit: 'đ' }
+                        };
+                    } else {
+                        newItems[slot.id] = {
+                            name: `Giày Hoàng Kim (${elemObj.name})`,
+                            element: currentElem,
+                            baseStats: [{ stat: 'Tốc độ di chuyển', val: 42, unit: '%' }],
+                            line1: { stat: 'Kháng Lôi (Thổ)', val: 32, unit: '%' },
+                            line2: { stat: 'Sinh lực tối đa', val: 240, unit: 'đ' },
+                            line3: { stat: 'Giảm suy yếu', val: 40, unit: 'đ' }
+                        };
+                    }
+
+                    currentElem = elemObj.generates;
+                });
+
+                setItems(newItems);
+                showToast(`Đã tự động đổi Set Đồ & Vòng Kích Full 100% cho phái ${faction.name} (${ELEMENTS[faction.element].name})!`);
+            };
+
             useEffect(() => {
                 const initFirebase = async () => {
                     if (!window.FirebaseSDK || !window.FirebaseAuth) return;
@@ -614,7 +760,10 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                     <span className="text-xs font-bold text-slate-400">Môn Phái:</span>
                                     <select 
                                         value={selectedFaction.id}
-                                        onChange={(e) => setSelectedFaction(FACTIONS.find(f => f.id === e.target.value))}
+                                        onChange={(e) => {
+                                            const found = FACTIONS.find(f => f.id === e.target.value);
+                                            if (found) handleFactionSelect(found);
+                                        }}
                                         className="bg-slate-950 text-amber-400 border border-slate-800 rounded-lg px-3 py-1 text-xs font-bold focus:outline-none focus:border-amber-500">
                                         {FACTIONS.map(f => (
                                             <option key={f.id} value={f.id}>{f.name} ({ELEMENTS[f.element].name})</option>
@@ -622,6 +771,35 @@ Hãy soi kỹ bức ảnh trang bị được cung cấp và đưa ra bản phâ
                                     </select>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Thanh Chọn Môn Phái Trực Quan 1-Click */}
+                        <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
+                            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 mr-1">
+                                <i className="fa-solid fa-users"></i>
+                                <span>Đổi Nhanh Môn Phái:</span>
+                            </span>
+                            {FACTIONS.map(f => {
+                                const el = ELEMENTS[f.element];
+                                const isSel = selectedFaction.id === f.id;
+                                return (
+                                    <button
+                                        key={f.id}
+                                        onClick={() => handleFactionSelect(f)}
+                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
+                                            isSel 
+                                                ? `${el.bg} ${el.class} border-amber-400 shadow-lg scale-105 ring-1 ring-amber-400` 
+                                                : 'bg-slate-900/90 text-slate-400 border-slate-800 hover:border-slate-600 hover:text-white'
+                                        }`}
+                                    >
+                                        <i className={`fa-solid ${f.icon}`}></i>
+                                        <span>{f.name}</span>
+                                        <span className={`text-[9px] px-1 rounded uppercase font-black ${el.bg} ${el.class}`}>
+                                            {el.name}
+                                        </span>
+                                    </button>
+                                );
+                            })}
                         </div>
                     </header>
 
